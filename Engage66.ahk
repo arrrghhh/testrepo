@@ -464,11 +464,11 @@ Loop, % globNewIDArray.Length()
 	}
 	Sleep, SaveTimeoutms
 	Send, {Tab}
+	Sleep, 50
 	LogEntry("Tab once")
-	Sleep, 50
 	Send, {Tab}
-	LogEntry("Tab twice")
 	Sleep, 50
+	LogEntry("Tab twice")
 	Send, {Space}
 	LogEntry("Space to close the window...")
 	TrayTip, Waiting..., Wait for AppSuite, 3, 1
