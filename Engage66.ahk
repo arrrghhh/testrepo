@@ -262,8 +262,10 @@ GuiControl, Text, LoadingTxt, Array Complete: %TotalLines%
 LogEntry("Loaded CompleteID's from " . SelectedFile)
 Global globNewIDArray :=
 LogEntry("Before FuncLoop")
+GuiControl, Text, LoadingTxt, Concatenation...
 globNewIDArray := FuncLoop(globIDArray)
 LogEntry("After FuncLoop - globNewIDArray")
+GuiControl, Text, LoadingTxt, Concatenation...Complete
 GuiControl, Text, RunIDPrep, Run ID Prep
 Return
 
@@ -504,6 +506,8 @@ FuncLoop(CompleteIDArray)
 	for k, v in CompleteIDArray
 	{
 		NewIDArray.Push(v)
+		GuiControl, , MyProgress, %A_Index% 
+		GuiControl, Text, LoadingTxt, Concatenation...%A_Index% of %k%
 		;check if we are at the 20th item OR if we are at the last item (which could be a weird number)
 		if (NewIDArray.length()=20 || a_index = CompleteIDArray.length())
 		{
