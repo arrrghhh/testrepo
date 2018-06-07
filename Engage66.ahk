@@ -247,7 +247,7 @@ LogEntry("Count number of lines")
 FileRead File, %SelectedFile%
 StringReplace File, File, `n, `n, All UseErrorLevel
 TotalLines := ErrorLevel
-TotalLines++	; Add one as it was always one short since the last line did not have a `n at the end... Of course if there is an emtpy line it will count an extra line.  Oh well.
+TotalLines++	; Add one as it was always one short since the last line did not have a `n at the end... Of course if there is an emtpy line it will count the extra emtpy line.  Oh well.
 LogEntry("Total number of SegID's is: " . TotalLines)
 GuiControl, +Range0-%TotalLines%, MyProgress
 Gui, Show
@@ -301,11 +301,13 @@ Loop, % globNewIDArray.Length()
 	RightClick :=
 	GroupByBoxColor :=
 	LogEntry("Waiting for 'Application Suite' to become active")
+	TrayTip, Waiting..., Waiting for AppSuite, 3, 1
 	WinWaitActive, Application Suite,,%Timeout%
 	If ErrorLevel
 	{
 		LogEntry("Timeout waiting for Application Suite")
 		MsgBox,, Timeout, Timeout, please focus the Application Suite
+		TrayTip, Waiting..., Waiting for AppSuite, 3, 1
 		WinWaitActive, Application Suite,,%Timeout%
 		If ErrorLevel
 		{
@@ -318,6 +320,7 @@ Loop, % globNewIDArray.Length()
 	MouseClick, R, %B01X%, %B01Y%  ; Right click on query
 	LogEntry("Right click on query at (" . B01X . "`," . B01Y . ")")
 	Sleep, 100
+	TrayTip, Query, Right-Click on Query, 3, 1
 	LogEntry("Before While loop - waiting for menu")
 	StartTime := A_TickCount
 	ElapsedTime := 0
@@ -345,6 +348,7 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Clicked on 'Edit'")
 	SkipClickEdit:
 	LogEntry("Waiting for Advanced Query window")
+	TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
 	WinWaitActive, Advanced Query,,%Timeout%
 	If ErrorLevel
 	{
@@ -356,20 +360,30 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Click on SegID Box")
 	MouseGetPos,,,,SegIDControl
 	ControlSetText,%SegIDControl%, % globNewIDArray[A_Index], Advanced Query
+	TrayTip, Insert, Inserting SegID's, 3, 1
 	LogEntry("Inserting " . globNewIDArray[A_Index])
 	Sleep, 100
 	LogEntry("Click on 'Save&Run'")
 	MouseClick,, %B04X%, %B04Y%	; Click on 'Save&Run'
 	LogEntry("Waiting for 'Application Suite' to become active")
+	TrayTip, Waiting..., Waiting for AppSuite, 3, 1
 	WinWaitActive, Application Suite,,%Timeout%
 	If ErrorLevel
 	{
 		LogEntry("Timeout waiting for Application Suite")
 		MsgBox,, Timeout, Timeout waiting for Application Suite, please focus the Application Suite (was 'Save & Run' pressed?)
+		WinWaitActive, Application Suite,,%Timeout%
+		If ErrorLevel
+		{
+			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+			GuiControl, Text, RunRobot, RunRobot
+			Return
+		}
 	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	ErrorTimeout := 0
+	TrayTip, Waiting..., Waiting for query to finish, 3, 1
 	While (GroupByBoxColor != 0xFFFFFF) ; Wait for GroupBy to go white (indicates query is done)
 	{
 		If (ElapsedTime > Timeoutms)
@@ -396,6 +410,7 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Click Save Calls (" . B07X . "`," . B07Y . ")")
 	MouseClick,, %B07X%, %B07Y%
 	LogEntry("Wait for SaveCalls dialog")
+	TrayTip, Waiting..., Waiting for Save Calls Dialog box..., 3, 1
 	WinWaitActive, Save Calls,,%Timeout%
 	If ErrorLevel
 	{
@@ -414,6 +429,7 @@ Loop, % globNewIDArray.Length()
 	Sleep 100
 	MouseClick,, %B10X%,%B10Y%
 	LogEntry("Click on Save Btn")
+	TrayTip, Click, Clicked Save, 3, 1
 	Sleep, 500
 	MouseMove, %B08X%, %B08Y%
 	LogEntry("Move mouse to Location input, checking for 'info' screen...")
@@ -427,9 +443,11 @@ Loop, % globNewIDArray.Length()
 	If (InfoBox != "")
 	{
 		LogEntry("In IF statement for InfoBox")
+		TrayTip, Esc, Esc window for Screen Calls, 3, 1
 		Send, {Esc}
 	}
 	LogEntry("Waiting for 'Saving' Dialog box")
+	TrayTip, Waiting..., Waiting for Save Calls to show..., 3, 1
 	WinWaitActive, Saving,,%Timeout%
 	If ErrorLevel
 	{
@@ -437,6 +455,7 @@ Loop, % globNewIDArray.Length()
 		MsgBox,, Timeout, Timeout waiting for Saving Dialog - was 'Save Calls' pressed?
 	}
 	LogEntry("Waiting for 'Close' button on 'Saving' dialog (indicates task is complete)")
+	TrayTip, Waiting..., Waiting for Save Calls to Complete..., 5, 1
 	WinWaitActive,, Close,,%Timeout%
 	If ErrorLevel
 	{
@@ -452,6 +471,7 @@ Loop, % globNewIDArray.Length()
 	Sleep, 50
 	Send, {Space}
 	LogEntry("Space to close the window...")
+	TrayTip, Waiting..., Wait for AppSuite, 3, 1
 	WinWaitActive, Application Suite,,%Timeout%
 	If ErrorLevel
 	{
@@ -462,6 +482,7 @@ Loop, % globNewIDArray.Length()
 	LoopElapsed := LoopElapsed / 1000
 	LoopElapsed := Round(LoopElapsed)
 	LogEntry("Completed loop: " . A_Index . " of " . globNewIDArray.Length() . " in " . LoopElapsed . "sec.")
+	TrayTip, Loop End, End of loop %A_Index% of %TotalArray%, 3, 1
 	GuiControl, , MyProgress, %A_Index%
 	GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %TotalArray%
 }
