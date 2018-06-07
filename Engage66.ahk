@@ -12,7 +12,9 @@ ConfigFile := "EKconfig.txt"
 
 Menu, FileMenu, Add, Save Config, SaveConfig
 Menu, FileMenu, Add, Exit, ExitSub
+Menu, OptionsMenu, Add, AlwaysOnTop, OnTop
 Menu, MyMenu, Add, &File, :FileMenu
+Menu, MyMenu, Add, &Options, :OptionsMenu
 Gui, Menu, MyMenu
 
 GuiTitle=EliteKeep Extraction
@@ -86,6 +88,26 @@ Loop, read, %ConfigFile%
 
 Gui, Show,, EliteKeep Extraction
 Return
+
+OnTop:
+CheckMarkToggle(A_ThisMenuItem, A_ThisMenu)
+Return
+
+CheckMarkToggle(MenuItem, MenuName)
+{
+	global
+	%MenuItem%Flag := !%MenuItem%Flag ; Toggles the variable every time the function is called
+	If (%MenuItem%Flag)
+	{
+		Menu, %MenuName%, Check, %MenuItem%
+		Gui, 1: +AlwaysOnTop
+	}
+	Else
+	{
+		Menu, %MenuName%, UnCheck, %MenuItem%
+		Gui, 1: -AlwaysOnTop
+	}
+}
 
 SaveConfig:
 Loop, 10
@@ -267,10 +289,13 @@ Timeoutms := Timeout*1000
 SaveTimeoutms := SaveTimeout*1000
 TotalTime := A_TickCount
 TotalElapsed := 0
+TotalIDs := globIDArray.Length()
+TotalArray := globNewIDArray.Length()
+GuiControl, +Range0-%TotalArray%, MyProgress
+GuiControl, , MyProgress, 0
+GuiControl, Text, LoadingTxt, Robot Starting: 0 of %TotalArray%
 Loop, % globNewIDArray.Length()
 {
-	
-	GuiControl, Text, LoadingTxt, Completed: %TotalLines%
 	LoopTime := A_TickCount
 	LoopElapsed := 0
 	RightClick :=
@@ -435,10 +460,14 @@ Loop, % globNewIDArray.Length()
 	}
 	LoopElapsed := A_TickCount - LoopTime
 	LoopElapsed := LoopElapsed / 1000
+	LoopElapsed := Round(LoopElapsed)
 	LogEntry("Completed loop: " . A_Index . " of " . globNewIDArray.Length() . " in " . LoopElapsed . "sec.")
+	GuiControl, , MyProgress, %A_Index%
+	GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %TotalArray%
 }
 TotalElapsed := A_TickCount - TotalTime
 TotalElapsed := TotalElapsed / 1000
+TotalElapsed := Round(TotalElapsed)
 LogEntry("Task Complete in " . TotalElapsed . "sec.  Go have a beer.")
 MsgBox, Done in %TotalElapsed%sec
 GuiControl, Text, RunRobot, RunRobot
