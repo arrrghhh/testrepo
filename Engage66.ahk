@@ -7,8 +7,8 @@ SetTitleMatchMode, RegEx
 CoordMode, Mouse, Screen
 CoordMode, Pixel, Screen
 
-SelectedFile := "CompleteID.txt"
-ConfigFile := "EKconfig.txt"
+SelectedFile := A_ScriptDir . "\config\ID.txt"
+ConfigFile := A_ScriptDir . "\config\EKconfig.txt"
 
 Menu, FileMenu, Add, Save Config, SaveConfig
 Menu, FileMenu, Add, Exit, ExitSub
@@ -123,12 +123,14 @@ Loop, 10
 		GuiControlGet, B%A_Index%Y
 	}
 }
-IfExist EKConfig.txt
+If FileExist(ConfigFile)
 	MsgBox,4,Delete Config, Do you want to overwrite the existing config?
 IfMsgBox Yes
-	FileDelete, EKConfig.txt
+	FileDelete, %ConfigFile%
 IfMsgBox No
 	Return
+If !FileExist(A_ScriptDir . "\config")
+	FileCreateDir, % A_ScriptDir . "\config"
 Loop, 10
 {
 	If (A_Index < 10)
@@ -136,20 +138,24 @@ Loop, 10
 		tmpX := B0%A_Index%X
 		tmpY := B0%A_Index%Y
 		Sleep, 50
-		FileAppend, % "B0" . A_Index . "X:" . tmpX . "`n", EKConfig.txt
+		FileAppend, % "B0" . A_Index . "X:" . tmpX . "`n", %ConfigFile%
 		Sleep, 100
-		FileAppend, % "B0" . A_Index . "Y:" . tmpY . "`n", EKConfig.txt
+		FileAppend, % "B0" . A_Index . "Y:" . tmpY . "`n", %ConfigFile%
 	}
 	If (A_Index >= 10)
 	{
 		tmpX := B%A_Index%X
 		tmpY := B%A_Index%Y
 		Sleep, 50
-		FileAppend, % "B" . A_Index . "X:" . tmpX . "`n", EKConfig.txt
+		FileAppend, % "B" . A_Index . "X:" . tmpX . "`n", %ConfigFile%
 		Sleep, 100
-		FileAppend, % "B" . A_Index . "Y:" . tmpY . "`n", EKConfig.txt
+		FileAppend, % "B" . A_Index . "Y:" . tmpY . "`n", %ConfigFile%
 	}
 }
+IfExist %ConfigFile%
+	MsgBox,, Save Config, Save Config Task Complete
+Else
+	MsgBox,, Save Error, Error running Save Config - permissions to config folder?
 Return
 
 B1:		; Query
