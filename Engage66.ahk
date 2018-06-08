@@ -265,11 +265,12 @@ Return
 RunIDPrep:
 GuiControl, Text, RunIDPrep, RunningPrep
 Global globIDArray := []
-LogEntry("Get ID's from file: " . SelectedFile)
+LogEntry("Run ID Prep Start (from file:) " . SelectedFile)
 If !FileExist(SelectedFile)
 {
 	LogEntry("Missing " . SelectedFile . " file path...")
 	MsgBox, Missing %SelectedFile% file path...
+	GuiControl, Text, RunIDPrep, RunIDPrep
 	Return
 }
 LogEntry("Count number of lines")
@@ -300,6 +301,13 @@ Return
 
 RunRobot:
 GuiControl, Text, RunRobot, RunningRobot
+If (globIDArray[1] = "")
+{
+	MsgBox, Robot Error, Run Robot failed - did you prep the ID's first?
+	LogEntry("FAILURE - Array slot 1 empty...Returning")
+	GuiControl, Text, RunRobot, RunRobot
+	Return
+}
 Loop, 10
 {
 	If (A_Index < 10)
