@@ -503,11 +503,12 @@ FuncLoop(CompleteIDArray)
 	IDArray := []
 	ID :=
 	Increment := 1
+	TotalArray := CompleteIDArray.length()
 	for k, v in CompleteIDArray
 	{
 		NewIDArray.Push(v)
 		GuiControl, , MyProgress, %A_Index% 
-		GuiControl, Text, LoadingTxt, Concatenation...%A_Index% of %k%
+		GuiControl, Text, LoadingTxt, Concatenation...%k% of %TotalArray%
 		;check if we are at the 20th item OR if we are at the last item (which could be a weird number)
 		if (NewIDArray.length()=20 || a_index = CompleteIDArray.length())
 		{
