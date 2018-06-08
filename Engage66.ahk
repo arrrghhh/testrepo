@@ -356,6 +356,14 @@ Loop, % globNewIDArray.Length()
 	{
 		LogEntry("Timeout waiting for Advanced Query Window")
 		MsgBox,, Timeout, Timeout waiting for Advanced Query Window, was edit pressed?  Manually edit query and press OK.
+		TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
+		WinWaitActive, Advanced Query,,%Timeout%
+		If ErrorLevel
+		{
+			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+			GuiControl, Text, RunRobot, RunRobot
+			Return
+		}
 	}
 	Sleep, 100
 	MouseClick,, %B03X%, %B03Y% ; Click on SegID box
@@ -374,6 +382,7 @@ Loop, % globNewIDArray.Length()
 	{
 		LogEntry("Timeout waiting for Application Suite")
 		MsgBox,, Timeout, Timeout waiting for Application Suite, please focus the Application Suite (was 'Save & Run' pressed?)
+		TrayTip, Waiting..., Waiting for AppSuite, 3, 1
 		WinWaitActive, Application Suite,,%Timeout%
 		If ErrorLevel
 		{
@@ -418,6 +427,14 @@ Loop, % globNewIDArray.Length()
 	{
 		LogEntry("Timeout waiting for Save Calls Dialog")
 		MsgBox,, Timeout, Timeout waiting for Save Calls Dialog - ensure calls are selected and press 'save calls' button, then press OK.
+		TrayTip, Waiting..., Waiting for Save Calls Dialog box..., 3, 1
+		WinWaitActive, Save Calls,,%Timeout%
+		If ErrorLevel
+		{
+			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+			GuiControl, Text, RunRobot, RunRobot
+			Return
+		}
 	}
 	LogEntry("Click 'location' inputbox (" . B08X . "`," . B08Y . ")")
 	MouseClick,, %B08X%, %B08Y%
@@ -455,6 +472,14 @@ Loop, % globNewIDArray.Length()
 	{
 		LogEntry("Timeout waiting for Saving Dialog")
 		MsgBox,, Timeout, Timeout waiting for Saving Dialog - was 'Save Calls' pressed?
+		TrayTip, Waiting..., Waiting for Save Calls to show..., 3, 1
+		WinWaitActive, Saving,,%Timeout%
+		If ErrorLevel
+		{
+			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+			GuiControl, Text, RunRobot, RunRobot
+			Return
+		}
 	}
 	LogEntry("Waiting for 'Close' button on 'Saving' dialog (indicates task is complete)")
 	TrayTip, Waiting..., Waiting for Save Calls to Complete..., 5, 1
@@ -463,6 +488,13 @@ Loop, % globNewIDArray.Length()
 	{
 		LogEntry("Timeout waiting for Close Button on 'Save Calls'")
 		MsgBox,, Timeout, Timeout waiting for 'Close' button after save calls - press OK after it is complete
+		WinWaitActive,, Close,,%Timeout%
+		If ErrorLevel
+		{
+			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+			GuiControl, Text, RunRobot, RunRobot
+			Return
+		}
 	}
 	Sleep, SaveTimeoutms
 	Send, {Tab}
@@ -479,6 +511,13 @@ Loop, % globNewIDArray.Length()
 	{
 		LogEntry("Timeout waiting for Application Suite")
 		MsgBox,, Timeout, Please focus the Application Suite
+		WinWaitActive, Application Suite,,%Timeout%
+		If ErrorLevel
+		{
+			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+			GuiControl, Text, RunRobot, RunRobot
+			Return
+		}
 	}
 	LoopElapsed := A_TickCount - LoopTime
 	LoopElapsed := LoopElapsed / 1000
