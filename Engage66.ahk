@@ -184,82 +184,92 @@ Return
 B1:		; Query
 KeyWait, Enter, D
 MouseGetPos, B01X, B01Y
-MsgBox, %B01X% %B01Y%
+MsgBox,,Coords, %B01X% %B01Y%
 GuiControl,, B01X, %B01X%
 GuiControl,, B01Y, %B01Y%
+LogEntry("Query coordinates logged: " . B01X . "," . B01Y)
 Return
 
 B2:		; Edit
 KeyWait, Enter, D
 MouseGetPos, B02X, B02Y
-MsgBox, %B02X% %B02Y%
+MsgBox,,Coords, %B02X% %B02Y%
 GuiControl,, B02X, %B02X%
 GuiControl,, B02Y, %B02Y%
+LogEntry("Edit coordinates logged: " . B02X . "," . B02Y)
 Return
 
 B3:		; SegID
 KeyWait, Enter, D
 MouseGetPos, B03X, B03Y
-MsgBox, %B03X% %B03Y%
+MsgBox,,Coords, %B03X% %B03Y%
 GuiControl,, B03X, %B03X%
 GuiControl,, B03Y, %B03Y%
+LogEntry("SegID coordinates logged: " . B03X . "," . B03Y)
 Return
 
 B4:		; SaveRun
 KeyWait, Enter, D
 MouseGetPos, B04X, B04Y
-MsgBox, %B04X% %B04Y%
+MsgBox,,Coords, %B04X% %B04Y%
 GuiControl,, B04X, %B04X%
 GuiControl,, B04Y, %B04Y%
+LogEntry("Save&Run coordinates logged: " . B04X . "," . B04Y)
 Return
 
 B5:		; GroupBy
 KeyWait, Enter, D
 MouseGetPos, B05X, B05Y
-MsgBox, %B05X% %B05Y%
+MsgBox,,Coords, %B05X% %B05Y%
 GuiControl,, B05X, %B05X%
 GuiControl,, B05Y, %B05Y%
+LogEntry("GroupBy Box coordinates logged: " . B05X . "," . B06Y)
 Return
 
 
 B6:		; Top Result
 KeyWait, Enter, D
 MouseGetPos, B06X, B06Y
-MsgBox, %B06X% %B06Y%
+MsgBox,,Coords, %B06X% %B06Y%
 GuiControl,, B06X, %B06X%
 GuiControl,, B06Y, %B06Y%
+LogEntry("Top Result coordinates logged: " . B06X . "," . B06Y)
 Return
 
 B7:		; Save Calls
 KeyWait, Enter, D
 MouseGetPos, B07X, B07Y
-MsgBox, %B07X% %B07Y%
+MsgBox,,Coords, %B07X% %B07Y%
 GuiControl,, B07X, %B07X%
 GuiControl,, B07Y, %B07Y%
+LogEntry("Save Calls Button coordinates logged: " . B07X . "," . B07Y)
 Return
 
 B8:		; Loc Input
 KeyWait, Enter, D
 MouseGetPos, B08X, B08Y
-MsgBox, %B08X% %B08Y%
+MsgBox,,Coords, %B08X% %B08Y%
 GuiControl,, B08X, %B08X%
 GuiControl,, B08Y, %B08Y%
+LogEntry("Loc Input in Save calls tab coordinates logged: " . B08X . "," . B08Y)
 Return
 
 B9:		; WAV Radio
 KeyWait, Enter, D
 MouseGetPos, B09X, B09Y
-MsgBox, %B09X% %B09Y%
+MsgBox,,Coords, %B09X% %B09Y%
 GuiControl,, B09X, %B09X%
 GuiControl,, B09Y, %B09Y%
+LogEntry("WAV radio button coordinates logged: " . B09X . "," . B09Y)
 Return
 
 B10:	; Save Btn
 KeyWait, Enter, D
 MouseGetPos, B10X, B10Y
-MsgBox, %B10X% %B10Y%
+MsgBox,,Coords, %B10X% %B10Y%
 GuiControl,, B10X, %B10X%
 GuiControl,, B10Y, %B10Y%
+LogEntry("Save button coordinates logged: " . B10X . "," . B10Y)
 Return
 
 RunIDPrep:
@@ -269,7 +279,7 @@ LogEntry("Run ID Prep Start (from file:) " . SelectedFile)
 If !FileExist(SelectedFile)
 {
 	LogEntry("Missing " . SelectedFile . " file path...")
-	MsgBox, Missing %SelectedFile% file path...
+	MsgBox,, File Error, Missing %SelectedFile% file path...
 	GuiControl, Text, RunIDPrep, RunIDPrep
 	Return
 }
@@ -303,7 +313,7 @@ RunRobot:
 GuiControl, Text, RunRobot, RunningRobot
 If (globIDArray[1] = "")
 {
-	MsgBox, Robot Error, Run Robot failed - did you prep the ID's first?
+	MsgBox,, Robot Error, Run Robot failed - did you prep the ID's first?
 	LogEntry("FAILURE - Array slot 1 empty...Returning")
 	GuiControl, Text, RunRobot, RunRobot
 	Return
@@ -568,7 +578,7 @@ TotalElapsed := A_TickCount - TotalTime
 TotalElapsed := TotalElapsed / 1000
 TotalElapsed := Round(TotalElapsed)
 LogEntry("Task Complete in " . TotalElapsed . "sec.  Go have a beer.")
-MsgBox, Done in %TotalElapsed%sec
+MsgBox,, Complete, Done in %TotalElapsed%sec
 GuiControl, Text, RunRobot, RunRobot
 Return
 
