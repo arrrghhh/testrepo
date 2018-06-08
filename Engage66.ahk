@@ -152,7 +152,7 @@ Loop, 10
 		FileAppend, % "B" . A_Index . "Y:" . tmpY . "`n", %ConfigFile%
 	}
 }
-IfExist %ConfigFile%
+If FileExist(ConfigFile)
 	MsgBox,, Save Config, Save Config Task Complete
 Else
 	MsgBox,, Save Error, Error running Save Config - permissions to config folder?
@@ -243,7 +243,7 @@ RunIDPrep:
 GuiControl, Text, RunIDPrep, RunningPrep
 Global globIDArray := []
 LogEntry("Get ID's from file: " . SelectedFile)
-IfNotExist, %SelectedFile%
+If !FileExist(SelectedFile)
 {
 	LogEntry("Missing " . SelectedFile . " file path...")
 	MsgBox, Missing %SelectedFile% file path...
