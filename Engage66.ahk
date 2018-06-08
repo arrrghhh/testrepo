@@ -74,7 +74,6 @@ Gui, add, Button, gB10 x15 y95, Save Btn
 Gui, add, Edit, w50 h100 r1 x85 y95 vB10X
 Gui, add, Edit, w50 h100 r1 x140 y95 vB10Y
 Gui, add, Edit, w300 h100 r1 x15 y125 vUNCpath, C:\temp
-Gui, -dpiscale
 
 Array := []
 Loop, read, %ConfigFile%
@@ -93,7 +92,7 @@ Loop, read, %ConfigFile%
 		GuiControl,, B%Num%Y, % B%Num%Y
 	}
 }
-
+Gui, -dpiscale
 Gui, Show,, EliteKeep Extraction
 Return
 
