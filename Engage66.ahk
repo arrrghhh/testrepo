@@ -9,6 +9,14 @@ CoordMode, Pixel, Screen
 
 SelectedFile := A_ScriptDir . "\config\ID.txt"
 ConfigFile := A_ScriptDir . "\config\EKconfig.txt"
+Global LogFile := A_ScriptDir . "\log\Log.txt"
+
+If !FileExist(LogFile)
+{
+	If !FileExist(A_ScriptDir . "\log")
+		FileCreateDir, % A_ScriptDir . "\log"
+}
+LogEntry("Application Startup")
 
 Menu, FileMenu, Add, Save Config, SaveConfig
 Menu, FileMenu, Add, Exit, ExitSub
@@ -101,15 +109,18 @@ CheckMarkToggle(MenuItem, MenuName)
 	{
 		Menu, %MenuName%, Check, %MenuItem%
 		Gui, 1: +AlwaysOnTop
+		LogEntry("Setting AlwaysOnTop")
 	}
 	Else
 	{
 		Menu, %MenuName%, UnCheck, %MenuItem%
 		Gui, 1: -AlwaysOnTop
+		LogEntry("Removing AlwaysOnTop")
 	}
 }
 
 SaveConfig:
+LogEntry("Getting values from input boxes...")
 Loop, 10
 {
 	If (A_Index < 10)
@@ -124,13 +135,25 @@ Loop, 10
 	}
 }
 If FileExist(ConfigFile)
+{
+	LogEntry("Existing config file, asking user to overwrite")
 	MsgBox,4,Delete Config, Do you want to overwrite the existing config?
+}
 IfMsgBox Yes
+{
+	LogEntry("Permission granted, deleting existing configuration file: " . ConfigFile)
 	FileDelete, %ConfigFile%
+}
 IfMsgBox No
+{
+	LogEntry("Permission denied, returning with no changes.")
 	Return
+}
 If !FileExist(A_ScriptDir . "\config")
+{
+	LogEntry("Config folder missing, likely first run - creating missing config folder")
 	FileCreateDir, % A_ScriptDir . "\config"
+}
 Loop, 10
 {
 	If (A_Index < 10)
@@ -578,7 +601,7 @@ FuncLoop(CompleteIDArray)
 
 LogEntry(Message)
 {
-	FileAppend, %A_MM%/%A_DD%/%A_YYYY% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec% - %Message%`n, Log.txt
+	FileAppend, %A_MM%/%A_DD%/%A_YYYY% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec% - %Message%`n, %LogFile%
 }
 
 ExitSub:
