@@ -537,6 +537,7 @@ Loop, % globNewIDArray.Length()
 	}
 	LogEntry("Waiting for 'Open File Location' button on 'Saving/Done' dialog (indicates task is complete)")
 	TrayTip, Waiting..., Waiting for Save Calls to Complete..., 5, 1
+	WinWait,, Open File Location,%Timeout%
 	WinActivate,, Open File Location
 	WinWaitActive,, Open File Location,%Timeout%
 	If ErrorLevel
