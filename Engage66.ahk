@@ -527,19 +527,18 @@ Loop, % globNewIDArray.Length()
 			Return
 		}
 	}
-	LogEntry("Waiting for 'Close' button on 'Saving' dialog (indicates task is complete)")
+	LogEntry("Waiting for 'Open File Location' button on 'Saving/Done' dialog (indicates task is complete)")
 	TrayTip, Waiting..., Waiting for Save Calls to Complete..., 5, 1
-	WinWaitActive, Close,,%Timeout%
+	WinWaitActive, Open File Location,,%Timeout%
 	If ErrorLevel
 	{
-		LogEntry("Timeout waiting for Close Button on 'Save Calls'")
-		MsgBox,, Timeout, Timeout waiting for 'Close' button after save calls - press OK after it is complete
-		WinWaitActive, Close,,%Timeout%
+		LogEntry("Timeout waiting for 'Open File Location' Button on 'Save Calls'")
+		MsgBox,, Timeout, Timeout waiting for 'Open File Location' button after save calls - press OK after it is complete
+		WinWaitActive, Open File Location,,%Timeout%
 		If ErrorLevel
 		{
-			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
-			GuiControl, Text, RunRobot, RunRobot
-			Return
+			MsgBox,, Timeout 2, Second timeout, will move to next step.
+			GoTo WaitAppEnd
 		}
 	}
 	Sleep, SaveTimeoutms
@@ -551,6 +550,7 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Tab twice")
 	Send, {Space}
 	LogEntry("Space to close the window...")
+	WaitAppEnd:
 	TrayTip, Waiting..., Wait for AppSuite, 3, 1
 	WinWaitActive, Application Suite,,%Timeout%
 	If ErrorLevel
