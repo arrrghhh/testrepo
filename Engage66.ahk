@@ -397,6 +397,8 @@ Loop, % globNewIDArray.Length()
 	SkipClickEdit:
 	LogEntry("Waiting for Advanced Query window")
 	TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
+	WinWait, Advanced Query,,%Timeout%
+	WinActivate, Advanced Query
 	WinWaitActive, Advanced Query,,%Timeout%
 	If ErrorLevel
 	{
@@ -423,6 +425,8 @@ Loop, % globNewIDArray.Length()
 	MouseClick,, %B04X%, %B04Y%	; Click on 'Save&Run'
 	LogEntry("Waiting for 'Application Suite' to become active")
 	TrayTip, Waiting..., Waiting for AppSuite, 3, 1
+	WinWait, Application Suite,,%Timeout%
+	WinActivate, Application Suite
 	WinWaitActive, Application Suite,,%Timeout%
 	If ErrorLevel
 	{
@@ -468,6 +472,8 @@ Loop, % globNewIDArray.Length()
 	MouseClick,, %B07X%, %B07Y%
 	LogEntry("Wait for SaveCalls dialog")
 	TrayTip, Waiting..., Waiting for Save Calls Dialog box..., 3, 1
+	WinWait, Save Calls,,%Timeout%
+	WinActivate, Save Calls
 	WinWaitActive, Save Calls,,%Timeout%
 	If ErrorLevel
 	{
@@ -513,6 +519,8 @@ Loop, % globNewIDArray.Length()
 	}
 	LogEntry("Waiting for 'Saving' Dialog box")
 	TrayTip, Waiting..., Waiting for Save Calls to show..., 3, 1
+	WinWait, Saving,,%Timeout%
+	WinActivate, Saving
 	WinWaitActive, Saving,,%Timeout%
 	If ErrorLevel
 	{
@@ -529,12 +537,13 @@ Loop, % globNewIDArray.Length()
 	}
 	LogEntry("Waiting for 'Open File Location' button on 'Saving/Done' dialog (indicates task is complete)")
 	TrayTip, Waiting..., Waiting for Save Calls to Complete..., 5, 1
-	WinWaitActive, Open File Location,,%Timeout%
+	WinActivate,, Open File Location
+	WinWaitActive,, Open File Location,%Timeout%
 	If ErrorLevel
 	{
 		LogEntry("Timeout waiting for 'Open File Location' Button on 'Save Calls'")
 		MsgBox,, Timeout, Timeout waiting for 'Open File Location' button after save calls - press OK after it is complete
-		WinWaitActive, Open File Location,,%Timeout%
+		WinWaitActive,, Open File Location,%Timeout%
 		If ErrorLevel
 		{
 			MsgBox,, Timeout 2, Second timeout, will move to next step.
@@ -552,6 +561,8 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Space to close the window...")
 	WaitAppEnd:
 	TrayTip, Waiting..., Wait for AppSuite, 3, 1
+	WinWait, Application Suite,,%Timeout%
+	WinActivate, Application Suite
 	WinWaitActive, Application Suite,,%Timeout%
 	If ErrorLevel
 	{
@@ -570,7 +581,7 @@ Loop, % globNewIDArray.Length()
 	LoopElapsed := Round(LoopElapsed)
 	LogEntry("Completed loop: " . A_Index . " of " . globNewIDArray.Length() . " in " . LoopElapsed . "sec.")
 	TrayTip, Loop End, End of loop %A_Index% of %TotalArray%, 3, 1
-	GuiControl, , MyProgress, %A_Index%
+	GuiControl,, MyProgress, %A_Index%
 	GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %TotalArray%
 }
 TotalElapsed := A_TickCount - TotalTime
