@@ -529,12 +529,12 @@ Loop, % globNewIDArray.Length()
 	}
 	LogEntry("Waiting for 'Close' button on 'Saving' dialog (indicates task is complete)")
 	TrayTip, Waiting..., Waiting for Save Calls to Complete..., 5, 1
-	WinWaitActive,, Close,,%Timeout%
+	WinWaitActive, Close,,%Timeout%
 	If ErrorLevel
 	{
 		LogEntry("Timeout waiting for Close Button on 'Save Calls'")
 		MsgBox,, Timeout, Timeout waiting for 'Close' button after save calls - press OK after it is complete
-		WinWaitActive,, Close,,%Timeout%
+		WinWaitActive, Close,,%Timeout%
 		If ErrorLevel
 		{
 			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
