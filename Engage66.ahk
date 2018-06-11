@@ -73,7 +73,10 @@ Gui, add, Edit, w50 h100 r1 x140 y65 vB09Y
 Gui, add, Button, gB10 x15 y95, Save Btn
 Gui, add, Edit, w50 h100 r1 x85 y95 vB10X
 Gui, add, Edit, w50 h100 r1 x140 y95 vB10Y
-Gui, add, Edit, w300 h100 r1 x15 y125 vUNCpath, C:\temp
+Gui, add, Text, x15 y125, Archive Path:
+Gui, add, Edit, w300 h100 r1 x35 y145 vArchivepath, C:\temp
+Gui, add, Text, x15 y175, Processing Path:
+Gui, add, Edit, w300 h100 r1 x35 y195 vProcessingpath, C:\temp\processing
 
 Array := []
 Loop, read, %ConfigFile%
@@ -330,7 +333,8 @@ Loop, 10
 		GuiControlGet, B%A_Index%Y
 	}
 }
-GuiControlGet, UNCPath
+GuiControlGet, Archivepath
+GuiControlGet, Processingpath
 GuiControlGet, Timeout
 GuiControlGet, SaveTimeout
 Timeoutms := Timeout*1000
@@ -341,7 +345,7 @@ TotalIDs := globIDArray.Length()
 TotalArray := globNewIDArray.Length()
 GuiControl, +Range0-%TotalArray%, MyProgress
 GuiControl, , MyProgress, 0
-GuiControl, Text, LoadingTxt, Robot Starting: 0 of %TotalArray%
+GuiControl, Text, LoadingTxt, Robot Starting on: 1 of %TotalArray%
 Loop, % globNewIDArray.Length()
 {
 	LoopTime := A_TickCount
@@ -487,8 +491,8 @@ Loop, % globNewIDArray.Length()
 	Sleep 100
 	MouseGetPos,,,,LocControl
 	LogEntry("ClassNN - " . LocControl)
-	ControlSetText, %LocControl%, %UNCPath%
-	LogEntry("Inject save calls path (" . UNCPath . ") to location input box")
+	ControlSetText, %LocControl%, %Processingpath%
+	LogEntry("Inject save calls path (" . Processingpath . ") to location input box")
 	MouseClick,, %B09X%,%B09Y%
 	LogEntry("Click on WAV radio btn")
 	Sleep 100
@@ -551,6 +555,14 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Tab twice")
 	Send, {Space}
 	LogEntry("Space to close the window...")
+	If (CheckFiles = 1)
+	{
+		FileList := []
+		CurrentPos := % A_Index
+		Loop, Files, %Processingpath%
+			FileList[A_Index] := A_LoopFileName
+		FoundPos := InStr(globNewIDArray[A_Index], Needle , CaseSensitive := false, StartingPos := 1, Occurrence := 1)
+	}
 	TrayTip, Waiting..., Wait for AppSuite, 3, 1
 	WinWaitActive, Application Suite,,%Timeout%
 	If ErrorLevel
