@@ -598,6 +598,7 @@ Loop, % globNewIDArray.Length()
 	LoopElapsed := A_TickCount - LoopTime
 	LoopElapsed := LoopElapsed / 1000
 	LoopElapsed := Round(LoopElapsed)
+	Sleep, 100
 	LogEntry("Completed loop: " . A_Index . " of " . globNewIDArray.Length() . " in " . LoopElapsed . "sec.")
 	TrayTip, Loop End, End of loop %A_Index% of %TotalArray%, 3, 1
 	GuiControl,, MyProgress, %A_Index%
@@ -606,6 +607,7 @@ Loop, % globNewIDArray.Length()
 TotalElapsed := A_TickCount - TotalTime
 TotalElapsed := TotalElapsed / 1000
 TotalElapsed := Round(TotalElapsed)
+Sleep, 100
 LogEntry("Task Complete in " . TotalElapsed . "sec.  Go have a beer.")
 MsgBox,, Complete, Done in %TotalElapsed%sec
 GuiControl, Text, RunRobot, RunRobot
