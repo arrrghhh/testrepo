@@ -470,6 +470,22 @@ Loop, % globNewIDArray.Length()
 	Sleep, 300
 	LogEntry("Click Save Calls (" . B07X . "`," . B07Y . ")")
 	MouseClick,, %B07X%, %B07Y%
+	Sleep, 500
+	MouseMove, %B08X%, %B08Y%
+	LogEntry("Move mouse to Location input, checking for 'info' screen...")
+	MouseGetPos,,,,InfoControl
+	Sleep, 1000
+	InfoNoRecs := 
+	ControlGet, InfoNoRecs,Hwnd,,,, styledButton4
+	Sleep, 100
+	LogEntry("InfoNoRecs: " . %InfoNoRecs% . " should only populate when there is the 'info' window, in which case we need to hit esc")
+	If(InfoNoRecs != "")
+	{
+		LogEntry("In IF statement for InfoNoRecs")
+		WinActivate,, Information
+		Send, {Esc}
+		continue
+	}
 	LogEntry("Wait for SaveCalls dialog")
 	TrayTip, Waiting..., Waiting for Save Calls Dialog box..., 3, 1
 	WinWait, Save Calls,,%Timeout%
@@ -505,7 +521,7 @@ Loop, % globNewIDArray.Length()
 	MouseMove, %B08X%, %B08Y%
 	LogEntry("Move mouse to Location input, checking for 'info' screen...")
 	MouseGetPos,,,,InfoControl
-	Sleep, 100
+	Sleep, 1000
 	LogEntry("Getting control under mouse")
 	InfoBox :=
 	ControlGet, InfoBox,Hwnd,,,, styledButton4
@@ -515,6 +531,7 @@ Loop, % globNewIDArray.Length()
 	{
 		LogEntry("In IF statement for InfoBox")
 		TrayTip, Esc, Esc window for Screen Calls, 3, 1
+		WinActivate,, Information
 		Send, {Esc}
 	}
 	LogEntry("Waiting for 'Saving' Dialog box")
@@ -556,9 +573,10 @@ Loop, % globNewIDArray.Length()
 	Sleep, 50
 	LogEntry("Tab once")
 	Send, {Tab}
-	Sleep, 50
+	Sleep, 100
 	LogEntry("Tab twice")
 	Send, {Space}
+	Sleep, 50
 	LogEntry("Space to close the window...")
 	WaitAppEnd:
 	TrayTip, Waiting..., Wait for AppSuite, 3, 1
@@ -631,6 +649,16 @@ FuncLoop(CompleteIDArray)
 LogEntry(Message)
 {
 	FileAppend, %A_MM%/%A_DD%/%A_YYYY% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec% - %Message%`n, %LogFile%
+}
+
+HideTrayTip()
+{
+    TrayTip  ; Attempt to hide it the normal way.
+    if SubStr(A_OSVersion,1,3) = "10." {
+        Menu Tray, NoIcon
+        Sleep 200  ; It may be necessary to adjust this sleep.
+        Menu Tray, Icon
+    }
 }
 
 ExitSub:
