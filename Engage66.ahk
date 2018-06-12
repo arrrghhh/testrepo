@@ -344,6 +344,20 @@ GuiControl, , MyProgress, 0
 GuiControl, Text, LoadingTxt, Robot Starting: 0 of %TotalArray%
 Loop, % globNewIDArray.Length()
 {
+	DriveSpaceFree, FreeSpaceArchive, %UNCPath%
+	LogEntry("Free Space: " . FreeSpaceArchive . " MB in " . UNCPath)
+	If (FreeSpaceArchive < 1024)
+	{
+		LogEntry("Free Space LOW: " . FreeSpaceArchive . " MB in " . UNCPath)
+		MsgBox,4,Free Space, Warning: Free space is low on %UNCPath% - %FreeSpaceArchive% MB.  End Task?
+		IfMsgBox Yes
+		{
+			LogEntry("User chose to stop based on low disk space")
+			GuiControl, Text, RunRobot, RunRobot
+			GuiControl, Text, LoadingTxt, Robot Ended. %A_Index% of %TotalArray%
+			Return
+		}
+	}
 	LoopTime := A_TickCount
 	LoopElapsed := 0
 	RightClick :=
