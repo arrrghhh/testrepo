@@ -349,6 +349,7 @@ TotalArray := globNewIDArray.Length()
 GuiControl, +Range0-%TotalArray%, MyProgress
 GuiControl, , MyProgress, 0
 GuiControl, Text, LoadingTxt, Robot Starting: 0 of %TotalArray%
+LogEntry("Robot Starting...0 of " . TotalArray)
 Loop, % globNewIDArray.Length()
 {
 	DriveSpaceFree, FreeSpaceArchive, %UNCPath%
