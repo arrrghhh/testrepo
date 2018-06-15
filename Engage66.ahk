@@ -378,10 +378,8 @@ Loop, % globNewIDArray.Length()
 			Return
 		}
 	}
-	Sleep, 100
 	MouseClick, R, %B01X%, %B01Y%  ; Right click on query
 	LogEntry("Right click on query at (" . B01X . "`," . B01Y . ")")
-	Sleep, 100
 	TrayTip, Query, Right-Click on Query, 3, 1
 	LogEntry("Before While loop - waiting for menu")
 	StartTime := A_TickCount
@@ -397,7 +395,6 @@ Loop, % globNewIDArray.Length()
 		}
 		PixelGetColor, RightClick, %B01X%, %B01Y%
 		LogEntry("Got Color " . RightClick . " at coodinate (" . B01X . "," . B01Y . ")")
-		Sleep, 50
 		ElapsedTime := A_TickCount - StartTime
 		LogEntry("Time elapsed: " . ElapsedTime)
 	}
@@ -427,14 +424,12 @@ Loop, % globNewIDArray.Length()
 			Return
 		}
 	}
-	Sleep, 100
 	MouseClick,, %B03X%, %B03Y% ; Click on SegID box
 	LogEntry("Click on SegID Box")
 	MouseGetPos,,,,SegIDControl
 	ControlSetText,%SegIDControl%, % globNewIDArray[A_Index], Advanced Query
 	TrayTip, Insert, Inserting SegID's, 3, 1
 	LogEntry("Inserting " . globNewIDArray[A_Index])
-	Sleep, 100
 	LogEntry("Click on 'Save&Run'")
 	MouseClick,, %B04X%, %B04Y%	; Click on 'Save&Run'
 	LogEntry("Waiting for 'Application Suite' to become active")
@@ -469,7 +464,6 @@ Loop, % globNewIDArray.Length()
 		}
 		PixelGetColor, GroupByBoxColor, %B05X%, %B05Y%
 		LogEntry("Got Color " . GroupByBoxColor . " at coodinate (" . B05X . "`," . B05Y . ")")
-		Sleep, 100
 		ElapsedTime := A_TickCount - StartTime
 		LogEntry("Time elapsed: " . ElapsedTime)
 	}
@@ -477,21 +471,16 @@ Loop, % globNewIDArray.Length()
 		MsgBox,, Error Timeout, Please ensure query ran successfully, timer breaking loop required to move along.
 	LogEntry("Clicking on top result (" . B06X . "`," . B06Y . ")")
 	MouseClick,, %B06X%, %B06Y%
-	Sleep 300
 	LogEntry("Sending ctrl-a")
-	Sleep 100
 	Send ^a
-	Sleep, 300
 	LogEntry("Click Save Calls (" . B07X . "`," . B07Y . ")")
 	MouseClick,, %B07X%, %B07Y%
-	Sleep, 500
 	MouseMove, %B08X%, %B08Y%
 	LogEntry("Move mouse to Location input, checking for 'info' screen...")
 	MouseGetPos,,,,InfoControl
 	Sleep, 1000
 	InfoNoRecs := 
 	ControlGet, InfoNoRecs,Hwnd,,,, styledButton4
-	Sleep, 100
 	LogEntry("InfoNoRecs: " . %InfoNoRecs% . " should only populate when there is the 'info' window, in which case we need to hit esc")
 	If(InfoNoRecs != "")
 	{
@@ -503,6 +492,7 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Wait for SaveCalls dialog")
 	TrayTip, Waiting..., Waiting for Save Calls Dialog box..., 3, 1
 	WinWait, Save Calls,,%Timeout%
+	Sleep, 200
 	WinActivate, Save Calls
 	WinWaitActive, Save Calls,,%Timeout%
 	If ErrorLevel
@@ -520,26 +510,22 @@ Loop, % globNewIDArray.Length()
 	}
 	LogEntry("Click 'location' inputbox (" . B08X . "`," . B08Y . ")")
 	MouseClick,, %B08X%, %B08Y%
-	Sleep 100
 	MouseGetPos,,,,LocControl
 	LogEntry("ClassNN - " . LocControl)
 	ControlSetText, %LocControl%, %UNCPath%
 	LogEntry("Inject save calls path (" . UNCPath . ") to location input box")
 	MouseClick,, %B09X%,%B09Y%
 	LogEntry("Click on WAV radio btn")
-	Sleep 100
 	MouseClick,, %B10X%,%B10Y%
 	LogEntry("Click on Save Btn")
 	TrayTip, Click, Clicked Save, 3, 1
-	Sleep, 500
 	MouseMove, %B08X%, %B08Y%
 	LogEntry("Move mouse to Location input, checking for 'info' screen...")
 	MouseGetPos,,,,InfoControl
-	Sleep, 1000
+	Sleep, 500
 	LogEntry("Getting control under mouse")
 	InfoBox :=
 	ControlGet, InfoBox,Hwnd,,,, styledButton4
-	Sleep, 100
 	LogEntry("InfoBox: " . %InfoBox% . " should only populate when there is the 'info' window, in which case we need to hit esc")
 	If (InfoBox != "")
 	{
@@ -584,13 +570,10 @@ Loop, % globNewIDArray.Length()
 	}
 	Sleep, SaveTimeoutms
 	Send, {Tab}
-	Sleep, 50
 	LogEntry("Tab once")
 	Send, {Tab}
-	Sleep, 100
 	LogEntry("Tab twice")
 	Send, {Space}
-	Sleep, 50
 	LogEntry("Space to close the window...")
 	WaitAppEnd:
 	TrayTip, Waiting..., Wait for AppSuite, 3, 1
@@ -612,7 +595,6 @@ Loop, % globNewIDArray.Length()
 	LoopElapsed := A_TickCount - LoopTime
 	LoopElapsed := LoopElapsed / 1000
 	LoopElapsed := Round(LoopElapsed)
-	Sleep, 100
 	LogEntry("Completed loop: " . A_Index . " of " . globNewIDArray.Length() . " in " . LoopElapsed . "sec.")
 	TrayTip, Loop End, End of loop %A_Index% of %TotalArray%, 3, 1
 	GuiControl,, MyProgress, %A_Index%
@@ -621,7 +603,6 @@ Loop, % globNewIDArray.Length()
 TotalElapsed := A_TickCount - TotalTime
 TotalElapsed := TotalElapsed / 1000
 TotalElapsed := Round(TotalElapsed)
-Sleep, 100
 LogEntry("Task Complete in " . TotalElapsed . "sec.  Go have a beer.")
 MsgBox,, Complete, Done in %TotalElapsed%sec
 GuiControl, Text, RunRobot, RunRobot
@@ -648,10 +629,8 @@ FuncLoop(CompleteIDArray)
 			{
 				ID := ID NewIDArray[k2] ";"
 			}
-			Sleep, 50
 			LogEntry("Create " . ID)
 			IDArray[Increment] := ID
-			Sleep, 50
 			LogEntry("Add to IDArray at index: " . Increment)
 			Increment++
 			ID:=
@@ -664,7 +643,9 @@ FuncLoop(CompleteIDArray)
 
 LogEntry(Message)
 {
+	Sleep, 100
 	FileAppend, %A_MM%/%A_DD%/%A_YYYY% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec% - %Message%`n, %LogFile%
+	Sleep, 50
 }
 
 HideTrayTip()
