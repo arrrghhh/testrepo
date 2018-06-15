@@ -411,8 +411,12 @@ Loop, % globNewIDArray.Length()
 		MsgBox,, Timeout, Please edit query manually, timer breaking loop required to move along.
 		GoTo SkipClickEdit
 	}
-	MouseClick,, %B02X%, %B02Y%   ; Click on 'Edit' menu
-	LogEntry("Clicked on 'Edit'")
+	Loop 5
+	{
+		Sleep 30
+		Send {Down}
+	}
+	Send {Enter}
 	SkipClickEdit:
 	LogEntry("Waiting for Advanced Query window")
 	TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
