@@ -491,14 +491,16 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Move mouse to Location input, checking for 'info' screen...")
 	MouseGetPos,,,,InfoControl
 	Sleep, 1000
-	InfoNoRecs := 
-	ControlGet, InfoNoRecs,Hwnd,,,, styledButton4
-	LogEntry("InfoNoRecs: " . %InfoNoRecs% . " should only populate when there is the 'info' window, in which case we need to hit esc")
-	If(InfoNoRecs != "")
+	WinActivate,, styledButton4
+	InfoNoRecs := WinExist("ahk_exe PresentationHost.exe","styledButton4")
+	LogEntry("InfoNoRecs: " . InfoNoRecs . " should only populate when there is the 'info' window, in which case we need to hit esc")
+	If(InfoNoRecs != "0x0")
 	{
 		LogEntry("In IF statement for InfoNoRecs")
 		WinActivate,, Information
 		Send, {Esc}
+		GuiControl,, MyProgress, %A_Index%
+		GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %TotalArray%
 		continue
 	}
 	LogEntry("Wait for SaveCalls dialog")
