@@ -30,6 +30,7 @@ Gui, Add, Tab3,, Query|Save Calls
 Gui, add, Button, gB1 x15 y35, Query
 Gui, add, Edit, w50 h100 r1 x85 y35 vB01X
 Gui, add, Edit, w50 h100 r1 x140 y35 vB01Y
+Gui, add, Button, gB1P x195 y35, GoTo
 Gui, add, Button, x15 y65 gB2, Edit
 Gui, add, Edit, w50 h100 r1 x85 y65 vB02X
 Gui, add, Edit, w50 h100 r1 x140 y65 vB02Y
@@ -269,6 +270,12 @@ MsgBox,,Coords, %B10X% %B10Y%
 GuiControl,, B10X, %B10X%
 GuiControl,, B10Y, %B10Y%
 LogEntry("Save button coordinates logged: " . B10X . "," . B10Y)
+Return
+
+B1P:
+WinActivate, Application Suite
+MouseMove, %B01X%, %B01Y%
+MouseClick, R, %B01X%, %B01Y%
 Return
 
 RunIDPrep:
