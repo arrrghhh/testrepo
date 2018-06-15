@@ -537,14 +537,11 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Move mouse to Location input, checking for 'info' screen...")
 	MouseGetPos,,,,InfoControl
 	Sleep, 500
-	LogEntry("Getting control under mouse")
-	InfoBox :=
-	ControlGet, InfoBox,Hwnd,,,, styledButton4
-	LogEntry("InfoBox: " . %InfoBox% . " should only populate when there is the 'info' window, in which case we need to hit esc")
-	If (InfoBox != "")
+	InfoBox := WinExist("ahk_exe PresentationHost.exe","styledButton4")
+	LogEntry("InfoBox: " . InfoBox . " should only populate when there is the 'info' window, in which case we need to hit esc")
+	If (InfoBox != "0x0")
 	{
 		LogEntry("In IF statement for InfoBox")
-		TrayTip, Esc, Esc window for Screen Calls, 3, 1
 		WinActivate,, Information
 		Send, {Esc}
 	}
