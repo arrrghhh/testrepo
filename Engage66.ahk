@@ -61,6 +61,11 @@ Gui, add, Text, x245 y140, SaveCalls Timeout
 Gui, add, Edit, w30 x340 y135 vSaveTimeout, 6
 Gui, add, Text, x375 y140, (sec)
 
+Gui, add, radio, x340 y170 vEngage, Engage 6.4+
+Gui, add, radio, x340 y195 vNIM, NIM, 6.3
+
+Gui, add, Edit, x250 y215 vTitle, Application Suite
+
 Gui, Add, Progress, x8 y245 w400 h18 vMyProgress
 Gui, Add, Text, x15 y270 w300 vLoadingTxt
 
@@ -273,7 +278,7 @@ LogEntry("Save button coordinates logged: " . B10X . "," . B10Y)
 Return
 
 B1P:
-WinActivate, Application Suite
+WinActivate, %Title%
 MouseMove, %B01X%, %B01Y%
 MouseClick, R, %B01X%, %B01Y%
 Return
@@ -353,6 +358,7 @@ Loop, % globNewIDArray.Length()
 			GuiControlGet, B%A_Index%Y
 		}
 	}
+	GuiControlGet, Title
 	GuiControlGet, UNCPath
 	DriveSpaceFree, FreeSpaceArchive, %UNCPath%
 	LogEntry("Free Space: " . FreeSpaceArchive . " MB in " . UNCPath)
@@ -372,15 +378,15 @@ Loop, % globNewIDArray.Length()
 	LoopElapsed := 0
 	RightClick :=
 	GroupByBoxColor :=
-	LogEntry("Waiting for 'Application Suite' to become active")
-	TrayTip, Waiting..., Waiting for AppSuite, 3, 1
-	WinWaitActive, Application Suite,,%Timeout%
+	LogEntry("Waiting for '" . Title . "' to become active")
+	TrayTip, Waiting..., Waiting for %Title%, 3, 1
+	WinWaitActive, %Title%,,%Timeout%
 	If ErrorLevel
 	{
-		LogEntry("Timeout waiting for Application Suite")
-		MsgBox,, Timeout, Timeout, please focus the Application Suite
-		TrayTip, Waiting..., Waiting for AppSuite, 3, 1
-		WinWaitActive, Application Suite,,%Timeout%
+		LogEntry("Timeout waiting for " . Title)
+		MsgBox,, Timeout, Timeout, please focus the %Title% window
+		TrayTip, Waiting..., Waiting for %Title%, 3, 1
+		WinWaitActive, %Title%,,%Timeout%
 		If ErrorLevel
 		{
 			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
@@ -446,17 +452,17 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Inserting " . globNewIDArray[A_Index])
 	LogEntry("Click on 'Save&Run'")
 	MouseClick,, %B04X%, %B04Y%	; Click on 'Save&Run'
-	LogEntry("Waiting for 'Application Suite' to become active")
-	TrayTip, Waiting..., Waiting for AppSuite, 3, 1
-	WinWait, Application Suite,,%Timeout%
-	WinActivate, Application Suite
-	WinWaitActive, Application Suite,,%Timeout%
+	LogEntry("Waiting for '" . Title . "' to become active")
+	TrayTip, Waiting..., Waiting for %Title%, 3, 1
+	WinWait, %Title%,,%Timeout%
+	WinActivate, %Title%
+	WinWaitActive, %Title%,,%Timeout%
 	If ErrorLevel
 	{
-		LogEntry("Timeout waiting for Application Suite")
-		MsgBox,, Timeout, Timeout waiting for Application Suite, please focus the Application Suite (was 'Save & Run' pressed?)
-		TrayTip, Waiting..., Waiting for AppSuite, 3, 1
-		WinWaitActive, Application Suite,,%Timeout%
+		LogEntry("Timeout waiting for " . Title)
+		MsgBox,, Timeout, Timeout waiting for %Title%, please focus the %Title% (was 'Save & Run' pressed?)
+		TrayTip, Waiting..., Waiting for %Title%, 3, 1
+		WinWaitActive, %Title%,,%Timeout%
 		If ErrorLevel
 		{
 			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
@@ -585,15 +591,15 @@ Loop, % globNewIDArray.Length()
 	Send, {Space}
 	LogEntry("Space to close the window...")
 	WaitAppEnd:
-	TrayTip, Waiting..., Wait for AppSuite, 3, 1
-	WinWait, Application Suite,,%Timeout%
-	WinActivate, Application Suite
-	WinWaitActive, Application Suite,,%Timeout%
+	TrayTip, Waiting..., Wait for %Title%, 3, 1
+	WinWait, %Title%,,%Timeout%
+	WinActivate, %Title%
+	WinWaitActive, %Title%,,%Timeout%
 	If ErrorLevel
 	{
-		LogEntry("Timeout waiting for Application Suite")
-		MsgBox,, Timeout, Please focus the Application Suite
-		WinWaitActive, Application Suite,,%Timeout%
+		LogEntry("Timeout waiting for " . Title)
+		MsgBox,, Timeout, Please focus the %Title% window
+		WinWaitActive, %Title%,,%Timeout%
 		If ErrorLevel
 		{
 			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
