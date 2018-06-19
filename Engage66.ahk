@@ -324,6 +324,8 @@ If (globIDArray[1] = "")
 	GuiControl, Text, RunRobot, RunRobot
 	Return
 }
+GroupAdd,WindowGroup,, styledButton4
+GroupAdd,WindowGroup, Save Calls
 GuiControlGet, Timeout
 GuiControlGet, SaveTimeout
 Timeoutms := Timeout*1000
@@ -487,16 +489,12 @@ Loop, % globNewIDArray.Length()
 	Send ^a
 	LogEntry("Click Save Calls (" . B07X . "`," . B07Y . ")")
 	MouseClick,, %B07X%, %B07Y%
-	MouseMove, %B08X%, %B08Y%
-	LogEntry("Move mouse to Location input, checking for 'info' screen...")
-	MouseGetPos,,,,InfoControl
-	Sleep, 1000
-	WinActivate,, styledButton4
-	InfoNoRecs := WinExist("ahk_exe PresentationHost.exe","styledButton4")
-	LogEntry("InfoNoRecs: " . InfoNoRecs . " should only populate when there is the 'info' window, in which case we need to hit esc")
-	If(InfoNoRecs != "0x0")
+	LogEntry("Wait for either Save Calls window OR the 'No Recordings Found' window")
+	WinWait, ahk_group WindowGroup,, %Timeout%
+	LogEntry("Check which window we have...")
+	If WinActive("","styledButton4")
 	{
-		LogEntry("In IF statement for InfoNoRecs")
+		LogEntry("In IF statement for info box - means there are no recordings")
 		WinActivate,, Information
 		Send, {Esc}
 		GuiControl,, MyProgress, %A_Index%
