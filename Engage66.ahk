@@ -324,20 +324,6 @@ If (globIDArray[1] = "")
 	GuiControl, Text, RunRobot, RunRobot
 	Return
 }
-Loop, 10
-{
-	If (A_Index < 10)
-	{
-		GuiControlGet, B0%A_Index%X
-		GuiControlGet, B0%A_Index%Y
-	}
-	If (A_Index >= 10)
-	{
-		GuiControlGet, B%A_Index%X
-		GuiControlGet, B%A_Index%Y
-	}
-}
-GuiControlGet, UNCPath
 GuiControlGet, Timeout
 GuiControlGet, SaveTimeout
 Timeoutms := Timeout*1000
@@ -352,6 +338,20 @@ GuiControl, Text, LoadingTxt, Robot Starting: 0 of %TotalArray%
 LogEntry("Robot Starting...0 of " . TotalArray)
 Loop, % globNewIDArray.Length()
 {
+	Loop, 10
+	{
+		If (A_Index < 10)
+		{
+			GuiControlGet, B0%A_Index%X
+			GuiControlGet, B0%A_Index%Y
+		}
+		If (A_Index >= 10)
+		{
+			GuiControlGet, B%A_Index%X
+			GuiControlGet, B%A_Index%Y
+		}
+	}
+	GuiControlGet, UNCPath
 	DriveSpaceFree, FreeSpaceArchive, %UNCPath%
 	LogEntry("Free Space: " . FreeSpaceArchive . " MB in " . UNCPath)
 	If (FreeSpaceArchive < 1024)
