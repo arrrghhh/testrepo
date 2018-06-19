@@ -656,7 +656,7 @@ LogEntry(Message)
 {
 	Sleep, 100
 	FileAppend, %A_MM%/%A_DD%/%A_YYYY% %A_Hour%:%A_Min%:%A_Sec%.%A_MSec% - %Message%`n, %LogFile%
-	Sleep, 50
+	Sleep, 100
 }
 
 HideTrayTip()
