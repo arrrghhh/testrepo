@@ -4,8 +4,8 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetTitleMatchMode, RegEx
-CoordMode, Mouse, Screen
-CoordMode, Pixel, Screen
+;CoordMode, Mouse, Window
+;CoordMode, Pixel, Screen
 
 SelectedFile := A_ScriptDir . "\config\ID.txt"
 ConfigFile := A_ScriptDir . "\config\EKconfig.txt"
@@ -79,7 +79,13 @@ Gui, add, Edit, w50 h100 r1 x140 y65 vB09Y
 Gui, add, Button, gB10 x15 y95, Save Btn
 Gui, add, Edit, w50 h100 r1 x85 y95 vB10X
 Gui, add, Edit, w50 h100 r1 x140 y95 vB10Y
-Gui, add, Edit, w300 h100 r1 x15 y125 vUNCpath, C:\temp
+Gui, add, Button, gB11 x15 y125, Three Dots
+Gui, add, Edit, w50 h100 r1 x85 y125 vB11X
+Gui, add, Edit, w50 h100 r1 x140 y125 vB11Y
+Gui, add, Button, gB12 x15 y160, Save Btn
+Gui, add, Edit, w50 h100 r1 x85 y160 vB12X
+Gui, add, Edit, w50 h100 r1 x140 y160 vB12Y
+Gui, add, Edit, w300 h100 r1 x15 y195 vUNCpath, C:\temp
 
 Array := []
 Loop, read, %ConfigFile%
@@ -126,7 +132,7 @@ CheckMarkToggle(MenuItem, MenuName)
 
 SaveConfig:
 LogEntry("Getting values from input boxes...")
-Loop, 10
+Loop, 12
 {
 	If (A_Index < 10)
 	{
@@ -159,7 +165,7 @@ If !FileExist(A_ScriptDir . "\config")
 	LogEntry("Config folder missing, likely first run - creating missing config folder")
 	FileCreateDir, % A_ScriptDir . "\config"
 }
-Loop, 10
+Loop, 12
 {
 	If (A_Index < 10)
 	{
@@ -277,6 +283,24 @@ GuiControl,, B10Y, %B10Y%
 LogEntry("Save button coordinates logged: " . B10X . "," . B10Y)
 Return
 
+B11:	; 3dots
+KeyWait, Enter, D
+MouseGetPos, B11X, B11Y
+MsgBox,,Coords, %B11X% %B11Y%
+GuiControl,, B11X, %B11X%
+GuiControl,, B11Y, %B11Y%
+LogEntry("Save button coordinates logged: " . B11X . "," . B11Y)
+Return
+
+B12:	; Save btn
+KeyWait, Enter, D
+MouseGetPos, B12X, B12Y
+MsgBox,,Coords, %B12X% %B12Y%
+GuiControl,, B12X, %B12X%
+GuiControl,, B12Y, %B12Y%
+LogEntry("Save button coordinates logged: " . B12X . "," . B12Y)
+Return
+
 B1P:
 WinActivate, %Title%
 MouseMove, %B01X%, %B01Y%
@@ -321,6 +345,7 @@ GuiControl, Text, RunIDPrep, Run ID Prep
 Return
 
 RunRobot:
+Gui, Submit, NoHide
 GuiControl, Text, RunRobot, RunningRobot
 If (globIDArray[1] = "")
 {
@@ -328,6 +353,25 @@ If (globIDArray[1] = "")
 	LogEntry("FAILURE - Array slot 1 empty...Returning")
 	GuiControl, Text, RunRobot, RunRobot
 	Return
+}
+If (!Engage and !NIM)
+{
+	MsgBox,, Select System, Please select system version
+	LogEntry("FAILURE - User did not select system version...Returning")
+	GuiControl, Text, RunRobot, RunRobot
+	Return
+}
+If !FileExist(UNCPath)
+{
+	LogEntry("Attempting to create save calls path: " . UNCPath)
+	FileCreateDir, %UNCPath%
+	If !FileExist(UNCPath)
+	{
+		MsgBox,, Save Path, Save calls path cannot be created.
+		LogEntry("FAILURE - Save calls path is not available")
+		GuiControl, Text, RunRobot, RunRobot
+		Return
+	}
 }
 GroupAdd,WindowGroup,, styledButton4
 GroupAdd,WindowGroup, Save Calls
@@ -345,21 +389,7 @@ GuiControl, Text, LoadingTxt, Robot Starting: 0 of %TotalArray%
 LogEntry("Robot Starting...0 of " . TotalArray)
 Loop, % globNewIDArray.Length()
 {
-	Loop, 10
-	{
-		If (A_Index < 10)
-		{
-			GuiControlGet, B0%A_Index%X
-			GuiControlGet, B0%A_Index%Y
-		}
-		If (A_Index >= 10)
-		{
-			GuiControlGet, B%A_Index%X
-			GuiControlGet, B%A_Index%Y
-		}
-	}
-	GuiControlGet, Title
-	GuiControlGet, UNCPath
+	Gui, Submit, NoHide
 	DriveSpaceFree, FreeSpaceArchive, %UNCPath%
 	LogEntry("Free Space: " . FreeSpaceArchive . " MB in " . UNCPath)
 	If (FreeSpaceArchive < 1024)
@@ -401,24 +431,25 @@ Loop, % globNewIDArray.Length()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	ErrorTimeout := 0
-	While (RightClick != 0x979797 && RightClick != 0xCCCCCC) ; Wait for menu to show
-	{
-		If (ElapsedTime > Timeoutms)
-		{
-			LogEntry("Elapsed time (" . ElapsedTime . ") > Timeoutms (" . Timeoutms . ") , breaking loop")
-			ErrorTimeout := 1
-			break
-		}
-		PixelGetColor, RightClick, %B01X%, %B01Y%
-		LogEntry("Got Color " . RightClick . " at coodinate (" . B01X . "," . B01Y . ")")
-		ElapsedTime := A_TickCount - StartTime
-		LogEntry("Time elapsed: " . ElapsedTime)
-	}
-	If (ErrorTimeout = 1)
-	{
-		MsgBox,, Timeout, Please edit query manually, timer breaking loop required to move along.
-		GoTo SkipClickEdit
-	}
+	;While (RightClick != 0x979797 && RightClick != 0xCCCCCC) ; Wait for menu to show
+	;{
+		;If (ElapsedTime > Timeoutms)
+		;{
+			;LogEntry("Elapsed time (" . ElapsedTime . ") > Timeoutms (" . Timeoutms . ") , breaking loop")
+			;ErrorTimeout := 1
+			;break
+		;}
+		;PixelGetColor, RightClick, %B01X%, %B01Y%
+		;LogEntry("Got Color " . RightClick . " at coodinate (" . B01X . "," . B01Y . ")")
+		;ElapsedTime := A_TickCount - StartTime
+		;LogEntry("Time elapsed: " . ElapsedTime)
+	;}
+	;If (ErrorTimeout = 1)
+	;{
+		;MsgBox,, Timeout, Please edit query manually, timer breaking loop required to move along.
+		;GoTo SkipClickEdit
+	;}
+	Sleep, 500
 	Loop 5
 	{
 		Sleep 30
@@ -526,87 +557,162 @@ Loop, % globNewIDArray.Length()
 			Return
 		}
 	}
-	LogEntry("Click 'location' inputbox (" . B08X . "`," . B08Y . ")")
-	MouseClick,, %B08X%, %B08Y%
-	MouseGetPos,,,,LocControl
-	LogEntry("ClassNN - " . LocControl)
-	ControlSetText, %LocControl%, %UNCPath%
-	LogEntry("Inject save calls path (" . UNCPath . ") to location input box")
-	MouseClick,, %B09X%,%B09Y%
-	LogEntry("Click on WAV radio btn")
-	MouseClick,, %B10X%,%B10Y%
-	LogEntry("Click on Save Btn")
-	TrayTip, Click, Clicked Save, 3, 1
-	MouseMove, %B08X%, %B08Y%
-	LogEntry("Move mouse to Location input, checking for 'info' screen...")
-	MouseGetPos,,,,InfoControl
-	Sleep, 500
-	InfoBox := WinExist("ahk_exe PresentationHost.exe","styledButton4")
-	LogEntry("InfoBox: " . InfoBox . " should only populate when there is the 'info' window, in which case we need to hit esc")
-	If (InfoBox != "0x0")
+	If (Engage)
 	{
-		LogEntry("In IF statement for InfoBox")
-		WinActivate,, Information
-		Send, {Esc}
-	}
-	LogEntry("Waiting for 'Saving' Dialog box")
-	TrayTip, Waiting..., Waiting for Save Calls to show..., 3, 1
-	WinWait, Saving,,%Timeout%
-	WinActivate, Saving
-	WinWaitActive, Saving,,%Timeout%
-	If ErrorLevel
-	{
-		LogEntry("Timeout waiting for Saving Dialog")
-		MsgBox,, Timeout, Timeout waiting for Saving Dialog - was 'Save Calls' pressed?
+		LogEntry("User selected Engage 6.4+, going down that save calls path...")
+		LogEntry("Click 'location' inputbox (" . B08X . "`," . B08Y . ")")
+		MouseClick,, %B08X%, %B08Y%
+		MouseGetPos,,,,LocControl
+		LogEntry("ClassNN - " . LocControl)
+		ControlSetText, %LocControl%, %UNCPath%
+		LogEntry("Inject save calls path (" . UNCPath . ") to location input box")
+		MouseClick,, %B09X%,%B09Y%
+		LogEntry("Click on WAV radio btn")
+		MouseClick,, %B10X%,%B10Y%
+		LogEntry("Click on Save Btn")
+		TrayTip, Click, Clicked Save, 3, 1
+		MouseMove, %B08X%, %B08Y%
+		LogEntry("Move mouse to Location input, checking for 'info' screen...")
+		MouseGetPos,,,,InfoControl
+		Sleep, 500
+		InfoBox := WinExist("ahk_exe PresentationHost.exe","styledButton4")
+		LogEntry("InfoBox: " . InfoBox . " should only populate when there is the 'info' window, in which case we need to hit esc")
+		If (InfoBox != "0x0")
+		{
+			LogEntry("In IF statement for InfoBox")
+			WinActivate,, Information
+			Send, {Esc}
+		}
+		LogEntry("Waiting for 'Saving' Dialog box")
 		TrayTip, Waiting..., Waiting for Save Calls to show..., 3, 1
+		WinWait, Saving,,%Timeout%
+		WinActivate, Saving
 		WinWaitActive, Saving,,%Timeout%
 		If ErrorLevel
 		{
-			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
-			GuiControl, Text, RunRobot, RunRobot
-			Return
+			LogEntry("Timeout waiting for Saving Dialog")
+			MsgBox,, Timeout, Timeout waiting for Saving Dialog - was 'Save Calls' pressed?
+			TrayTip, Waiting..., Waiting for Save Calls to show..., 3, 1
+			WinWaitActive, Saving,,%Timeout%
+			If ErrorLevel
+			{
+				MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+				GuiControl, Text, RunRobot, RunRobot
+				Return
+			}
 		}
-	}
-	LogEntry("Waiting for 'Open File Location' button on 'Saving/Done' dialog (indicates task is complete)")
-	TrayTip, Waiting..., Waiting for Save Calls to Complete..., 5, 1
-	WinWait,, Open File Location,%Timeout%
-	WinActivate,, Open File Location
-	WinWaitActive,, Open File Location,%Timeout%
-	If ErrorLevel
-	{
-		LogEntry("Timeout waiting for 'Open File Location' Button on 'Save Calls'")
-		MsgBox,, Timeout, Timeout waiting for 'Open File Location' button after save calls - press OK after it is complete
+		LogEntry("Waiting for 'Open File Location' button on 'Saving/Done' dialog (indicates task is complete)")
+		TrayTip, Waiting..., Waiting for Save Calls to Complete..., 5, 1
+		WinWait,, Open File Location,%Timeout%
+		WinActivate,, Open File Location
 		WinWaitActive,, Open File Location,%Timeout%
 		If ErrorLevel
 		{
-			MsgBox,, Timeout 2, Second timeout, will move to next step.
-			GoTo WaitAppEnd
+			LogEntry("Timeout waiting for 'Open File Location' Button on 'Save Calls'")
+			MsgBox,, Timeout, Timeout waiting for 'Open File Location' button after save calls - press OK after it is complete
+			WinWaitActive,, Open File Location,%Timeout%
+			If ErrorLevel
+			{
+				MsgBox,, Timeout 2, Second timeout, will move to next step.
+				GoTo WaitAppEnd
+			}
 		}
-	}
-	Sleep, SaveTimeoutms
-	Send, {Tab}
-	LogEntry("Tab once")
-	Send, {Tab}
-	LogEntry("Tab twice")
-	Send, {Space}
-	LogEntry("Space to close the window...")
-	WaitAppEnd:
-	TrayTip, Waiting..., Wait for %Title%, 3, 1
-	WinWait, %Title%,,%Timeout%
-	WinActivate, %Title%
-	WinWaitActive, %Title%,,%Timeout%
-	If ErrorLevel
-	{
-		LogEntry("Timeout waiting for " . Title)
-		MsgBox,, Timeout, Please focus the %Title% window
+		Sleep, SaveTimeoutms
+		Send, {Tab}
+		LogEntry("Tab once")
+		Send, {Tab}
+		LogEntry("Tab twice")
+		Send, {Space}
+		LogEntry("Space to close the window...")
+		WaitAppEnd:
+		TrayTip, Waiting..., Wait for %Title%, 3, 1
+		WinWait, %Title%,,%Timeout%
+		WinActivate, %Title%
 		WinWaitActive, %Title%,,%Timeout%
 		If ErrorLevel
 		{
-			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
-			GuiControl, Text, RunRobot, RunRobot
-			Return
+			LogEntry("Timeout waiting for " . Title)
+			MsgBox,, Timeout, Please focus the %Title% window
+			WinWaitActive, %Title%,,%Timeout%
+			If ErrorLevel
+			{
+				MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+				GuiControl, Text, RunRobot, RunRobot
+				Return
+			}
 		}
 	}
+	If (NIM)
+	{
+		LogEntry("User selected the legacy NIM/6.3 interface, going down that save calls path...")
+		WinActivate, Save Calls		
+		LogEntry("Tab 3x to get to file prefix checkbox")
+		Loop, 3
+		{
+			Send, {Tab}
+			Sleep, 30
+		}
+		LogEntry("Send space to select file prefix box")
+		Send, {Space}
+		LogEntry("Click on three dot button")
+		MouseClick,, %B11X%, %B11Y%
+		LogEntry("Waiting for 'Save as' dialog")
+		WinWaitActive, Save as,,%Timeout%
+		If ErrorLevel
+		{
+			MsgBox,, Timeout, Timeout waiting for 'save as' dialog
+			TrayTip, Waiting..., Waiting for Save As dialog..., 3, 1
+			WinWaitActive, Save as,, %Timeout%
+			If ErrorLevel
+			{
+				MsgBox,, Timeout 2, Second timeout, please start the robot again.
+				GuiControl, Text, RunRobot, RunRobot
+				Return
+			}
+		}
+		WinActivate, Save as
+		UNCPathNIM := UNCPath "\Call1.wav"
+		LogEntry("Injecting path" . UNCPathNIM)
+		ControlSetText, Edit1, %UNCPathNIM%
+		Sleep, 100
+		Send, {Enter}
+		WaitforClose:
+		LogEntry("Waiting for 'Save' button to show (indicating save calls is ready)")
+		SaveCallsText :=
+		WinGetText, SaveCallsText, Save Calls
+		Loop, parse, SaveCallsText, `r
+		{
+			If (A_Index = 1)
+			{	
+				If (A_LoopField = "Save")
+					GoTo Closer
+				Else
+					GoTo WaitforClose
+			}
+		}
+		Closer:
+		LogEntry("Clicking on Save btn")
+		ControlClick, Save, Save Calls
+		WaitforSave:
+		Sleep, 1500
+		LogEntry("Waiting for 'Close' button to show (indicating save calls is complete)")
+		SaveCallsText :=
+		WinGetText, SaveCallsText, Save Calls
+		Loop, parse, SaveCallsText, `r
+		{
+			If (A_Index = 1)
+			{	
+				If (A_LoopField = "Close")
+					GoTo Close
+				Else
+					GoTo WaitforSave
+			}
+		}
+		Close:
+		LogEntry("Clicking on Close btn at: (" . B12X . "," . B12Y . ")")
+		MouseClick,, %B12X%, %B12Y%
+	}
+	EndStep:
 	LoopElapsed := A_TickCount - LoopTime
 	LoopElapsed := LoopElapsed / 1000
 	LoopElapsed := Round(LoopElapsed)
