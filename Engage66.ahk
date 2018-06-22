@@ -672,9 +672,9 @@ Loop, % globNewIDArray.Length()
 		}
 		WinActivate, Save as
 		UNCPathNIM := UNCPath "\Call1.wav"
-		LogEntry("Injecting path" . UNCPathNIM)
+		LogEntry("Injecting path: " . UNCPathNIM)
 		ControlSetText, Edit1, %UNCPathNIM%
-		Sleep, 100
+		Sleep, 300
 		Send, {Enter}
 		WaitforClose:
 		LogEntry("Waiting for 'Save' button to show (indicating save calls is ready)")
@@ -683,7 +683,7 @@ Loop, % globNewIDArray.Length()
 		Loop, parse, SaveCallsText, `r
 		{
 			If (A_Index = 1)
-			{	
+			{
 				If (A_LoopField = "Save")
 					GoTo Closer
 				Else
@@ -694,7 +694,6 @@ Loop, % globNewIDArray.Length()
 		LogEntry("Clicking on Save btn")
 		ControlClick, Save, Save Calls
 		WaitforSave:
-		Sleep, 1500
 		LogEntry("Waiting for 'Close' button to show (indicating save calls is complete)")
 		SaveCallsText :=
 		WinGetText, SaveCallsText, Save Calls
@@ -709,6 +708,7 @@ Loop, % globNewIDArray.Length()
 			}
 		}
 		Close:
+		Sleep, SaveTimeoutms
 		LogEntry("Clicking on Close btn at: (" . B12X . "," . B12Y . ")")
 		MouseClick,, %B12X%, %B12Y%
 	}
