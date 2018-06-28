@@ -305,6 +305,7 @@ B1P:
 WinActivate, %Title%
 MouseMove, %B01X%, %B01Y%
 MouseClick, R, %B01X%, %B01Y%
+LogEntry("Right click on: (" . B01X . "," . B01Y . ")")
 Return
 
 RunIDPrep:
@@ -424,6 +425,7 @@ Loop, % globNewIDArray.Length()
 			Return
 		}
 	}
+	Sleep, 400
 	MouseClick, R, %B01X%, %B01Y%  ; Right click on query
 	LogEntry("Right click on query at (" . B01X . "`," . B01Y . ")")
 	TrayTip, Query, Right-Click on Query, 3, 1
@@ -674,8 +676,16 @@ Loop, % globNewIDArray.Length()
 		UNCPathNIM := UNCPath "\Call1.wav"
 		LogEntry("Injecting path: " . UNCPathNIM)
 		ControlSetText, Edit1, %UNCPathNIM%
-		Sleep, 300
 		Send, {Enter}
+		Sleep, 300
+		InfoBox := WinExist("","Information")
+		LogEntry("InfoBox: " . InfoBox . " should only populate when there is the 'info' window, in which case we need to hit esc")
+		If (InfoBox != "0x0")
+		{
+			LogEntry("In IF statement for InfoBox")
+			WinActivate,, Information
+			Send, {Esc}
+		}
 		WaitforClose:
 		LogEntry("Waiting for 'Save' button to show (indicating save calls is ready)")
 		SaveCallsText :=
