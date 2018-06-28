@@ -472,7 +472,9 @@ Loop, % globNewIDArray.Length()
 			GuiControl, Text, RunRobot, RunRobot
 			Return
 		}
+		HideTrayTip()
 	}
+	HideTrayTip()
 	Sleep, 400
 	MouseClick, R, %B01X%, %B01Y%  ; Right click on query
 	LogEntry("Right click on query at (" . B01X . "`," . B01Y . ")")
@@ -506,6 +508,7 @@ Loop, % globNewIDArray.Length()
 		Send {Down}
 	}
 	Send {Enter}
+	HideTrayTip()
 	SkipClickEdit:
 	LogEntry("Waiting for Advanced Query window")
 	TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
@@ -524,7 +527,9 @@ Loop, % globNewIDArray.Length()
 			GuiControl, Text, RunRobot, RunRobot
 			Return
 		}
+		HideTrayTip()
 	}
+	HideTrayTip()
 	MouseClick,, %B03X%, %B03Y% ; Click on SegID box
 	LogEntry("Click on SegID Box")
 	MouseGetPos,,,,SegIDControl
@@ -533,6 +538,7 @@ Loop, % globNewIDArray.Length()
 	LogEntry("Inserting " . globNewIDArray[A_Index])
 	LogEntry("Click on 'Save&Run'")
 	MouseClick,, %B04X%, %B04Y%	; Click on 'Save&Run'
+	HideTrayTip()
 	LogEntry("Waiting for '" . Title . "' to become active")
 	TrayTip, Waiting..., Waiting for %Title%, 3, 1
 	WinWait, %Title%,,%Timeout%
@@ -550,7 +556,9 @@ Loop, % globNewIDArray.Length()
 			GuiControl, Text, RunRobot, RunRobot
 			Return
 		}
+		HideTrayTip()
 	}
+	HideTrayTip()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	ErrorTimeout := 0
@@ -570,6 +578,7 @@ Loop, % globNewIDArray.Length()
 	}
 	If (ErrorTimeout = 1)
 		MsgBox,, Error Timeout, Please ensure query ran successfully, timer breaking loop required to move along.
+	HideTrayTip()
 	LogEntry("Clicking on top result (" . B06X . "`," . B06Y . ")")
 	MouseClick,, %B06X%, %B06Y%
 	LogEntry("Sending ctrl-a")
@@ -606,7 +615,9 @@ Loop, % globNewIDArray.Length()
 			GuiControl, Text, RunRobot, RunRobot
 			Return
 		}
+		HideTrayTip()
 	}
+	HideTrayTip()
 	If (Engage)
 	{
 		LogEntry("User selected Engage 6.4+, going down that save calls path...")
@@ -625,6 +636,7 @@ Loop, % globNewIDArray.Length()
 		LogEntry("Move mouse to Location input, checking for 'info' screen...")
 		MouseGetPos,,,,InfoControl
 		Sleep, 500
+		HideTrayTip()
 		InfoBox := WinExist("ahk_exe PresentationHost.exe","styledButton4")
 		LogEntry("InfoBox: " . InfoBox . " should only populate when there is the 'info' window, in which case we need to hit esc")
 		If (InfoBox != "0x0")
@@ -650,7 +662,9 @@ Loop, % globNewIDArray.Length()
 				GuiControl, Text, RunRobot, RunRobot
 				Return
 			}
+			HideTrayTip()
 		}
+		HideTrayTip()
 		LogEntry("Waiting for 'Open File Location' button on 'Saving/Done' dialog (indicates task is complete)")
 		TrayTip, Waiting..., Waiting for Save Calls to Complete..., 5, 1
 		WinWait,, Open File Location,%Timeout%
@@ -667,6 +681,7 @@ Loop, % globNewIDArray.Length()
 				GoTo WaitAppEnd
 			}
 		}
+		HideTrayTip()
 		Sleep, SaveTimeoutms
 		Send, {Tab}
 		LogEntry("Tab once")
@@ -691,6 +706,7 @@ Loop, % globNewIDArray.Length()
 				Return
 			}
 		}
+		HideTrayTip()
 	}
 	If (NIM)
 	{
@@ -707,6 +723,7 @@ Loop, % globNewIDArray.Length()
 		LogEntry("Click on three dot button")
 		MouseClick,, %B11X%, %B11Y%
 		LogEntry("Waiting for 'Save as' dialog")
+		TrayTip, Waiting..., Waiting for Save As dialog..., 3, 1
 		WinWaitActive, Save as,,%Timeout%
 		If ErrorLevel
 		{
@@ -719,7 +736,9 @@ Loop, % globNewIDArray.Length()
 				GuiControl, Text, RunRobot, RunRobot
 				Return
 			}
+			HideTrayTip()
 		}
+		HideTrayTip()
 		WinActivate, Save as
 		UNCPathNIM := UNCPath "\Call1.wav"
 		LogEntry("Injecting path: " . UNCPathNIM)
