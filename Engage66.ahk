@@ -27,26 +27,26 @@ Gui, Menu, MyMenu
 
 GuiTitle=EliteKeep Extraction
 Gui, Add, Tab3,, Query|Save Calls
-Gui, add, Button, gB1 x15 y35, Query
+Gui, add, Button, gB1 vB1 x15 y35, Query
 Gui, add, Edit, w50 h100 r1 x85 y35 vB01X
 Gui, add, Edit, w50 h100 r1 x140 y35 vB01Y
 Gui, add, Button, gB1P x195 y35, GoTo
-Gui, add, Button, x15 y65 gB2, Edit
-Gui, add, Edit, w50 h100 r1 x85 y65 vB02X
-Gui, add, Edit, w50 h100 r1 x140 y65 vB02Y
-Gui, add, Button, x15 y95 gB3, SegID
+;Gui, add, Button, gB2 vB2 x15 y65, Edit
+;Gui, add, Edit, w50 h100 r1 x85 y65 vB02X
+;Gui, add, Edit, w50 h100 r1 x140 y65 vB02Y
+Gui, add, Button, gB3 vB3 x15 y95, SegID
 Gui, add, Edit, w50 h100 r1 x85 y95 vB03X
 Gui, add, Edit, w50 h100 r1 x140 y95 vB03Y
-Gui, add, Button, x15 y125 gB4, Save&Run
+Gui, add, Button, gB4 vB4 x15 y125, SaveRun
 Gui, add, Edit, w50 h100 r1 x85 y125 vB04X
 Gui, add, Edit, w50 h100 r1 x140 y125 vB04Y
-Gui, add, Button, x15 y155 gB5, GroupBy:
+Gui, add, Button, gB5 vB5 x15 y155, GroupBy:
 Gui, add, Edit, w50 h100 r1 x85 y155 vB05X
 Gui, add, Edit, w50 h100 r1 x140 y155 vB05Y
-Gui, add, Button, x15 y185 gB6, Top Result
+Gui, add, Button, gB6 vB6 x15 y185, Top Result
 Gui, add, Edit, w50 h100 r1 x85 y185 vB06X
 Gui, add, Edit, w50 h100 r1 x140 y185 vB06Y
-Gui, add, Button, x15 y215 gB7, Save Calls
+Gui, add, Button, gB7 vB7 x15 y215, Save Calls
 Gui, add, Edit, w50 h100 r1 x85 y215 vB07X
 Gui, add, Edit, w50 h100 r1 x140 y215 vB07Y
 
@@ -70,19 +70,19 @@ Gui, Add, Progress, x8 y245 w400 h18 vMyProgress
 Gui, Add, Text, x15 y270 w300 vLoadingTxt
 
 Gui, Tab, 2
-Gui, add, Button, gB8 x15 y35, Loc Input
+Gui, add, Button, gB8 vB8 x15 y35, Loc Input
 Gui, add, Edit, w50 h100 r1 x85 y35 vB08X
 Gui, add, Edit, w50 h100 r1 x140 y35 vB08Y
-Gui, add, Button, gB9 x15 y65, WAV Radio
+Gui, add, Button, gB9 vB9 x15 y65, WAV Radio
 Gui, add, Edit, w50 h100 r1 x85 y65 vB09X
 Gui, add, Edit, w50 h100 r1 x140 y65 vB09Y
-Gui, add, Button, gB10 x15 y95, Save Btn
+Gui, add, Button, gB10 vB10 x15 y95, Save Btn
 Gui, add, Edit, w50 h100 r1 x85 y95 vB10X
 Gui, add, Edit, w50 h100 r1 x140 y95 vB10Y
-Gui, add, Button, gB11 x15 y125, Three Dots
+Gui, add, Button, gB11 vB11 x15 y125, Three Dots
 Gui, add, Edit, w50 h100 r1 x85 y125 vB11X
 Gui, add, Edit, w50 h100 r1 x140 y125 vB11Y
-Gui, add, Button, gB12 x15 y160, Save Btn
+Gui, add, Button, gB12 vB12 x15 y160, Save Btn
 Gui, add, Edit, w50 h100 r1 x85 y160 vB12X
 Gui, add, Edit, w50 h100 r1 x140 y160 vB12Y
 Gui, add, Edit, w300 h100 r1 x15 y195 vUNCpath, C:\temp
@@ -193,111 +193,159 @@ Else
 Return
 
 B1:		; Query
+GuiControl, Text, B1, Working
+TrayTip, Waiting..., Waiting for query X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B01X, B01Y
-MsgBox,,Coords, %B01X% %B01Y%
 GuiControl,, B01X, %B01X%
 GuiControl,, B01Y, %B01Y%
+GuiControl, Text, B1, Query
+HideTrayTip()
+MsgBox,,Coords, %B01X% %B01Y%
 LogEntry("Query coordinates logged: " . B01X . "," . B01Y)
 Return
 
 B2:		; Edit
+GuiControl, Text, B2, Working
+TrayTip, Waiting..., Waiting for Edit X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B02X, B02Y
-MsgBox,,Coords, %B02X% %B02Y%
 GuiControl,, B02X, %B02X%
 GuiControl,, B02Y, %B02Y%
+GuiControl, Text, B2, Edit
+HideTrayTip()
+MsgBox,,Coords, %B02X% %B02Y%
 LogEntry("Edit coordinates logged: " . B02X . "," . B02Y)
 Return
 
 B3:		; SegID
+GuiControl, Text, B3, Working
+TrayTip, Waiting..., Waiting for SegID X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B03X, B03Y
-MsgBox,,Coords, %B03X% %B03Y%
 GuiControl,, B03X, %B03X%
 GuiControl,, B03Y, %B03Y%
+GuiControl, Text, B3, SegID
+HideTrayTip()
+MsgBox,,Coords, %B03X% %B03Y%
 LogEntry("SegID coordinates logged: " . B03X . "," . B03Y)
 Return
 
 B4:		; SaveRun
+GuiControl, Text, B4, Working
+TrayTip, Waiting..., Waiting for SaveRun X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B04X, B04Y
-MsgBox,,Coords, %B04X% %B04Y%
 GuiControl,, B04X, %B04X%
 GuiControl,, B04Y, %B04Y%
+GuiControl, Text, B4, SaveRun
+HideTrayTip()
+MsgBox,,Coords, %B04X% %B04Y%
 LogEntry("Save&Run coordinates logged: " . B04X . "," . B04Y)
 Return
 
 B5:		; GroupBy
+GuiControl, Text, B5, Working
+TrayTip, Waiting..., Waiting for GroupBy X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B05X, B05Y
-MsgBox,,Coords, %B05X% %B05Y%
 GuiControl,, B05X, %B05X%
 GuiControl,, B05Y, %B05Y%
+GuiControl, Text, B5, GroupBy
+HideTrayTip()
+MsgBox,,Coords, %B05X% %B05Y%
 LogEntry("GroupBy Box coordinates logged: " . B05X . "," . B06Y)
 Return
 
 
 B6:		; Top Result
+GuiControl, Text, B6, Working
+TrayTip, Waiting..., Waiting for Top Result X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B06X, B06Y
-MsgBox,,Coords, %B06X% %B06Y%
 GuiControl,, B06X, %B06X%
 GuiControl,, B06Y, %B06Y%
+GuiControl, Text, B6, Top Result
+HideTrayTip()
+MsgBox,,Coords, %B06X% %B06Y%
 LogEntry("Top Result coordinates logged: " . B06X . "," . B06Y)
 Return
 
 B7:		; Save Calls
+GuiControl, Text, B7, Working
+TrayTip, Waiting..., Waiting for Save Calls X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B07X, B07Y
-MsgBox,,Coords, %B07X% %B07Y%
 GuiControl,, B07X, %B07X%
 GuiControl,, B07Y, %B07Y%
+GuiControl, Text, B7, Save Calls
+HideTrayTip()
+MsgBox,,Coords, %B07X% %B07Y%
 LogEntry("Save Calls Button coordinates logged: " . B07X . "," . B07Y)
 Return
 
 B8:		; Loc Input
+GuiControl, Text, B8, Working
+TrayTip, Waiting..., Waiting for Loc Input X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B08X, B08Y
-MsgBox,,Coords, %B08X% %B08Y%
 GuiControl,, B08X, %B08X%
 GuiControl,, B08Y, %B08Y%
+GuiControl, Text, B8, Loc Input
+HideTrayTip()
+MsgBox,,Coords, %B08X% %B08Y%
 LogEntry("Loc Input in Save calls tab coordinates logged: " . B08X . "," . B08Y)
 Return
 
 B9:		; WAV Radio
+GuiControl, Text, B9, Working
+TrayTip, Waiting..., Waiting for WAV Radio X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B09X, B09Y
-MsgBox,,Coords, %B09X% %B09Y%
 GuiControl,, B09X, %B09X%
 GuiControl,, B09Y, %B09Y%
+GuiControl, Text, B9, WAV Radio
+HideTrayTip()
+MsgBox,,Coords, %B09X% %B09Y%
 LogEntry("WAV radio button coordinates logged: " . B09X . "," . B09Y)
 Return
 
 B10:	; Save Btn
+GuiControl, Text, B10, Working
+TrayTip, Waiting..., Waiting for Save Btn X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B10X, B10Y
-MsgBox,,Coords, %B10X% %B10Y%
 GuiControl,, B10X, %B10X%
 GuiControl,, B10Y, %B10Y%
+GuiControl, Text, B10, Save Btn
+HideTrayTip()
+MsgBox,,Coords, %B10X% %B10Y%
 LogEntry("Save button coordinates logged: " . B10X . "," . B10Y)
 Return
 
 B11:	; 3dots
+GuiControl, Text, B11, Working
+TrayTip, Waiting..., Waiting for three dots X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B11X, B11Y
-MsgBox,,Coords, %B11X% %B11Y%
 GuiControl,, B11X, %B11X%
 GuiControl,, B11Y, %B11Y%
+GuiControl, Text, B11, Three Dots
+HideTrayTip()
+MsgBox,,Coords, %B11X% %B11Y%
 LogEntry("Save button coordinates logged: " . B11X . "," . B11Y)
 Return
 
 B12:	; Save btn
+GuiControl, Text, B12, Working
+TrayTip, Waiting..., Waiting for save button X`,Y coords, 30, 1
 KeyWait, Enter, D
 MouseGetPos, B12X, B12Y
-MsgBox,,Coords, %B12X% %B12Y%
 GuiControl,, B12X, %B12X%
 GuiControl,, B12Y, %B12Y%
+GuiControl, Text, B12, Save Btn
+HideTrayTip()
+MsgBox,,Coords, %B12X% %B12Y%
 LogEntry("Save button coordinates logged: " . B12X . "," . B12Y)
 Return
 
