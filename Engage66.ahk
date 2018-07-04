@@ -7,7 +7,7 @@ SetTitleMatchMode, RegEx
 ;CoordMode, Mouse, Window
 ;CoordMode, Pixel, Screen
 
-SelectedFile := A_ScriptDir . "\config\ID.txt"
+Global SelectedFile := A_ScriptDir . "\config\ID.txt"
 ConfigFile := A_ScriptDir . "\config\EKconfig.txt"
 Global LogFile := A_ScriptDir . "\log\Log.txt"
 
@@ -375,13 +375,8 @@ TotalLines++	; Add one as it was always one short since the last line did not ha
 LogEntry("Total number of SegID's is: " . TotalLines)
 GuiControl, +Range0-%TotalLines%, MyProgress
 Gui, Show
-Loop, read, %SelectedFile% ; Loading ID's from file
-{
-	GuiControl, , MyProgress, %A_Index% 
-	globIDArray[A_Index] := A_LoopReadLine
-	Sleep, 10
-	GuiControl, Text, LoadingTxt, Working on %A_Index% of %TotalLines%
-}
+FileRead, InputFile, %SelectedFile%
+globIDArray := StrSplit(InputFile, "`n")
 GuiControl, Text, LoadingTxt, Array Complete: %TotalLines%
 LogEntry("Loaded CompleteID's from " . SelectedFile)
 Global globNewIDArray :=
@@ -822,14 +817,12 @@ FuncLoop(CompleteIDArray)
 		;check if we are at the 20th item OR if we are at the last item (which could be a weird number)
 		if (NewIDArray.length()=20 || a_index = CompleteIDArray.length())
 		{
-			LogEntry("Entered IF statement (more than 20 items or end of list)")
 			for k2, v2 in NewIDArray
 			{
 				ID := ID NewIDArray[k2] ";"
 			}
-			LogEntry("Create " . ID)
 			IDArray[Increment] := ID
-			LogEntry("Add to IDArray at index: " . Increment)
+			LogEntry("Add to IDArray at index: " . Increment . " Create " . ID)
 			Increment++
 			ID:=
 			NewIDArray:=[] ; clear the list to get the next 20
