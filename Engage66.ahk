@@ -10,6 +10,8 @@ SetTitleMatchMode, RegEx
 Global SelectedFile := A_ScriptDir . "\config\ID.txt"
 ConfigFile := A_ScriptDir . "\config\EKconfig.txt"
 Global LogFile := A_ScriptDir . "\log\Log.txt"
+ComIDFile := A_ScriptDir . "\config\ComID.txt"
+Global ComID := 0
 
 If !FileExist(LogFile)
 {
@@ -61,7 +63,10 @@ Gui, add, Text, x245 y140, SaveCalls Timeout
 Gui, add, Edit, w30 x340 y135 vSaveTimeout, 6
 Gui, add, Text, x375 y140, (sec)
 
-Gui, add, radio, x340 y170 vEngage, Engage 6.4+
+Gui, add, radio, x250 y170 vSegID Group checked, SegmentID
+Gui, add, radio, x250 y195 vComID, CompleteID
+
+Gui, add, radio, x340 y170 vEngage Group, Engage 6.4+
 Gui, add, radio, x340 y195 vNIM, NIM, 6.3
 
 Gui, add, Edit, x250 y215 vTitle, Application Suite
@@ -378,7 +383,7 @@ Gui, Show
 FileRead, InputFile, %SelectedFile%
 globIDArray := StrSplit(InputFile, "`n")
 GuiControl, Text, LoadingTxt, Array Complete: %TotalLines%
-LogEntry("Loaded CompleteID's from " . SelectedFile)
+LogEntry("Loaded ID's from " . SelectedFile)
 Global globNewIDArray :=
 LogEntry("Before FuncLoop")
 GuiControl, Text, LoadingTxt, Concatenation...
@@ -429,7 +434,7 @@ TotalIDs := globIDArray.Length()
 TotalArray := globNewIDArray.Length()
 GuiControl, +Range0-%TotalArray%, MyProgress
 GuiControl, , MyProgress, 0
-GuiControl, Text, LoadingTxt, Robot Starting: 0 of %TotalArray%
+GuiControl, Text, LoadingTxt, Robot Working: 0 of %TotalArray%
 LogEntry("Robot Starting...0 of " . TotalArray)
 Loop, % globNewIDArray.Length()
 {
@@ -470,90 +475,137 @@ Loop, % globNewIDArray.Length()
 		HideTrayTip()
 	}
 	HideTrayTip()
-	Sleep, 400
-	MouseClick, R, %B01X%, %B01Y%  ; Right click on query
-	LogEntry("Right click on query at (" . B01X . "`," . B01Y . ")")
-	TrayTip, Query, Right-Click on Query, 3, 1
-	LogEntry("Before While loop - waiting for menu")
-	StartTime := A_TickCount
-	ElapsedTime := 0
-	ErrorTimeout := 0
-	;While (RightClick != 0x979797 && RightClick != 0xCCCCCC) ; Wait for menu to show
-	;{
-		;If (ElapsedTime > Timeoutms)
+	If (SegID = 1)
+	{
+		Sleep, 400
+		LogEntry("SegmentID selected, running routine for SegmentID")
+		MouseClick, R, %B01X%, %B01Y%  ; Right click on query
+		LogEntry("Right click on query at (" . B01X . "`," . B01Y . ")")
+		TrayTip, Query, Right-Click on Query, 3, 1
+		LogEntry("Before While loop - waiting for menu")
+		StartTime := A_TickCount
+		ElapsedTime := 0
+		ErrorTimeout := 0
+		;While (RightClick != 0x979797 && RightClick != 0xCCCCCC) ; Wait for menu to show
 		;{
-			;LogEntry("Elapsed time (" . ElapsedTime . ") > Timeoutms (" . Timeoutms . ") , breaking loop")
-			;ErrorTimeout := 1
-			;break
+			;If (ElapsedTime > Timeoutms)
+			;{
+				;LogEntry("Elapsed time (" . ElapsedTime . ") > Timeoutms (" . Timeoutms . ") , breaking loop")
+				;ErrorTimeout := 1
+				;break
+			;}
+			;PixelGetColor, RightClick, %B01X%, %B01Y%
+			;LogEntry("Got Color " . RightClick . " at coodinate (" . B01X . "," . B01Y . ")")
+			;ElapsedTime := A_TickCount - StartTime
+			;LogEntry("Time elapsed: " . ElapsedTime)
 		;}
-		;PixelGetColor, RightClick, %B01X%, %B01Y%
-		;LogEntry("Got Color " . RightClick . " at coodinate (" . B01X . "," . B01Y . ")")
-		;ElapsedTime := A_TickCount - StartTime
-		;LogEntry("Time elapsed: " . ElapsedTime)
-	;}
-	;If (ErrorTimeout = 1)
-	;{
-		;MsgBox,, Timeout, Please edit query manually, timer breaking loop required to move along.
-		;GoTo SkipClickEdit
-	;}
-	Sleep, 500
-	Loop 5
-	{
-		Sleep 30
-		Send {Down}
-	}
-	Send {Enter}
-	HideTrayTip()
-	SkipClickEdit:
-	LogEntry("Waiting for Advanced Query window")
-	TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
-	WinWait, Advanced Query,,%Timeout%
-	WinActivate, Advanced Query
-	WinWaitActive, Advanced Query,,%Timeout%
-	If ErrorLevel
-	{
-		LogEntry("Timeout waiting for Advanced Query Window")
-		MsgBox,, Timeout, Timeout waiting for Advanced Query Window, was edit pressed?  Manually edit query and press OK.
+		;If (ErrorTimeout = 1)
+		;{
+			;MsgBox,, Timeout, Please edit query manually, timer breaking loop required to move along.
+			;GoTo SkipClickEdit
+		;}
+		Sleep, 500
+		Loop 5
+		{
+			Sleep 30
+			Send {Down}
+		}
+		Send {Enter}
+		HideTrayTip()
+		SkipClickEdit:
+		LogEntry("Waiting for Advanced Query window")
 		TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
+		WinWait, Advanced Query,,%Timeout%
+		WinActivate, Advanced Query
 		WinWaitActive, Advanced Query,,%Timeout%
 		If ErrorLevel
 		{
-			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
-			GuiControl, Text, RunRobot, RunRobot
-			Return
+			LogEntry("Timeout waiting for Advanced Query Window")
+			MsgBox,, Timeout, Timeout waiting for Advanced Query Window, was edit pressed?  Manually edit query and press OK.
+			TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
+			WinWaitActive, Advanced Query,,%Timeout%
+			If ErrorLevel
+			{
+				MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+				GuiControl, Text, RunRobot, RunRobot
+				Return
+			}
+			HideTrayTip()
 		}
 		HideTrayTip()
-	}
-	HideTrayTip()
-	MouseClick,, %B03X%, %B03Y% ; Click on SegID box
-	LogEntry("Click on SegID Box")
-	MouseGetPos,,,,SegIDControl
-	ControlSetText,%SegIDControl%, % globNewIDArray[A_Index], Advanced Query
-	TrayTip, Insert, Inserting SegID's, 3, 1
-	LogEntry("Inserting " . globNewIDArray[A_Index])
-	LogEntry("Click on 'Save&Run'")
-	MouseClick,, %B04X%, %B04Y%	; Click on 'Save&Run'
-	HideTrayTip()
-	LogEntry("Waiting for '" . Title . "' to become active")
-	TrayTip, Waiting..., Waiting for %Title%, 3, 1
-	WinWait, %Title%,,%Timeout%
-	WinActivate, %Title%
-	WinWaitActive, %Title%,,%Timeout%
-	If ErrorLevel
-	{
-		LogEntry("Timeout waiting for " . Title)
-		MsgBox,, Timeout, Timeout waiting for %Title%, please focus the %Title% (was 'Save & Run' pressed?)
+		MouseClick,, %B03X%, %B03Y% ; Click on SegID box
+		LogEntry("Click on SegID Box")
+		MouseGetPos,,,,SegIDControl
+		ControlSetText,%SegIDControl%, % globNewIDArray[A_Index], Advanced Query
+		TrayTip, Insert, Inserting SegID's, 3, 1
+		LogEntry("Inserting " . globNewIDArray[A_Index])
+		LogEntry("Click on 'Save&Run'")
+		MouseClick,, %B04X%, %B04Y%	; Click on 'Save&Run'
+		HideTrayTip()
+		LogEntry("Waiting for '" . Title . "' to become active")
 		TrayTip, Waiting..., Waiting for %Title%, 3, 1
+		WinWait, %Title%,,%Timeout%
+		WinActivate, %Title%
 		WinWaitActive, %Title%,,%Timeout%
 		If ErrorLevel
 		{
-			MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
-			GuiControl, Text, RunRobot, RunRobot
-			Return
+			LogEntry("Timeout waiting for " . Title)
+			MsgBox,, Timeout, Timeout waiting for %Title%, please focus the %Title% (was 'Save & Run' pressed?)
+			TrayTip, Waiting..., Waiting for %Title%, 3, 1
+			WinWaitActive, %Title%,,%Timeout%
+			If ErrorLevel
+			{
+				MsgBox,, Timeout 2, Second timeout, please start the robot again when ready.
+				GuiControl, Text, RunRobot, RunRobot
+				Return
+			}
+			HideTrayTip()
 		}
 		HideTrayTip()
 	}
-	HideTrayTip()
+	If (ComID = 1)
+	{
+		LogEntry("CompleteID selected, running routine for CompleteID")
+		If FileExist(ComIDFile)
+			FileDelete, %ComIDFile%
+		Sleep, 200
+		FileAppend, % globNewIDArray[A_Index], %ComIDFile%
+		Sleep, 300
+		if FileExist("GECQueryUpdater.exe")
+		{
+			LogEntry("Running CompleteID script to modify DB")
+			TrayTip, Waiting..., Waiting for script to push to DB, 3, 1
+			RunWait %ComSpec% /c ""GECQueryUpdater.exe" "%ComIDFile%"",,Hide
+			HideTrayTip()
+		}
+		else
+			MsgBox,, Missing Binary, Missing GECQueryUpdater.exe
+		LogEntry("Left clicking on updated query at (" . B01X . "," B01Y . ")")
+		MouseClick, L, %B01X%, %B01Y%  ; Left click on query
+		StartTime := A_TickCount
+		ElapsedTime := 0
+		ErrorTimeout := 0
+		TrayTip, Waiting..., Waiting for query to start, 3, 1
+		While (GroupByBoxColor != 0xCED3D6 or GroupByBoxColor != 0xD6D3CE)
+		{
+			If (ElapsedTime > Timeoutms)
+			{
+				LogEntry("Elapsed time (" . ElapsedTime . ") > Timeoutms (" . Timeoutms . ") , breaking loop")
+				ErrorTimeout := 1
+				break
+			}
+			PixelGetColor, GroupByBoxColor, %B05X%, %B05Y%
+			LogEntry("Got Color " . GroupByBoxColor . " at coodinate (" . B05X . "`," . B05Y . ")")
+			ElapsedTime := A_TickCount - StartTime
+			LogEntry("Time elapsed: " . ElapsedTime)
+			If (GroupByBoxColor = 0xFFFFFF)
+			{
+					continue
+				Else
+					break
+			}
+		}
+	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	ErrorTimeout := 0
@@ -804,6 +856,7 @@ Return
 FuncLoop(CompleteIDArray)
 {
 	LogEntry("In FuncLoop - Setting up vars")
+	GuiControlGet, ComID
 	NewIDArray := []
 	IDArray := []
 	ID :=
@@ -817,12 +870,22 @@ FuncLoop(CompleteIDArray)
 		;check if we are at the 20th item OR if we are at the last item (which could be a weird number)
 		if (NewIDArray.length()=20 || a_index = CompleteIDArray.length())
 		{
-			for k2, v2 in NewIDArray
+			if (ComID = 0)
 			{
-				ID := ID NewIDArray[k2] ";"
+				for k2, v2 in NewIDArray
+				{
+					ID := ID NewIDArray[k2] ";"
+				}
+			}
+			if (ComID = 1)
+			{
+				for k2, v2 in NewIDArray
+				{
+					ID := ID NewIDArray[k2] "`n"
+				}
 			}
 			IDArray[Increment] := ID
-			LogEntry("Add to IDArray at index: " . Increment . " Create " . ID)
+			LogEntry("Add to IDArray at index: " . Increment . " Create " . IDArray[Increment])
 			Increment++
 			ID:=
 			NewIDArray:=[] ; clear the list to get the next 20
