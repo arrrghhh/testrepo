@@ -486,24 +486,6 @@ Loop, % globNewIDArray.Length()
 		StartTime := A_TickCount
 		ElapsedTime := 0
 		ErrorTimeout := 0
-		;While (RightClick != 0x979797 && RightClick != 0xCCCCCC) ; Wait for menu to show
-		;{
-			;If (ElapsedTime > Timeoutms)
-			;{
-				;LogEntry("Elapsed time (" . ElapsedTime . ") > Timeoutms (" . Timeoutms . ") , breaking loop")
-				;ErrorTimeout := 1
-				;break
-			;}
-			;PixelGetColor, RightClick, %B01X%, %B01Y%
-			;LogEntry("Got Color " . RightClick . " at coodinate (" . B01X . "," . B01Y . ")")
-			;ElapsedTime := A_TickCount - StartTime
-			;LogEntry("Time elapsed: " . ElapsedTime)
-		;}
-		;If (ErrorTimeout = 1)
-		;{
-			;MsgBox,, Timeout, Please edit query manually, timer breaking loop required to move along.
-			;GoTo SkipClickEdit
-		;}
 		Sleep, 500
 		Loop 5
 		{
@@ -600,6 +582,7 @@ Loop, % globNewIDArray.Length()
 			LogEntry("Time elapsed: " . ElapsedTime)
 			If (GroupByBoxColor = 0xFFFFFF)
 			{
+				If (ElapsedTime < 500)
 					continue
 				Else
 					break
