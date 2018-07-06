@@ -87,9 +87,6 @@ Gui, add, Edit, w50 h100 r1 x140 y95 vB10Y
 Gui, add, Button, gB11 vB11 x15 y125, Three Dots
 Gui, add, Edit, w50 h100 r1 x85 y125 vB11X
 Gui, add, Edit, w50 h100 r1 x140 y125 vB11Y
-Gui, add, Button, gB12 vB12 x15 y160, Save Btn
-Gui, add, Edit, w50 h100 r1 x85 y160 vB12X
-Gui, add, Edit, w50 h100 r1 x140 y160 vB12Y
 Gui, add, Edit, w300 h100 r1 x15 y195 vUNCpath, C:\temp
 
 Array := []
@@ -137,7 +134,7 @@ CheckMarkToggle(MenuItem, MenuName)
 
 SaveConfig:
 LogEntry("Getting values from input boxes...")
-Loop, 12
+Loop, 11
 {
 	If (A_Index < 10)
 	{
@@ -170,7 +167,7 @@ If !FileExist(A_ScriptDir . "\config")
 	LogEntry("Config folder missing, likely first run - creating missing config folder")
 	FileCreateDir, % A_ScriptDir . "\config"
 }
-Loop, 12
+Loop, 11
 {
 	If (A_Index < 10)
 	{
@@ -339,19 +336,6 @@ GuiControl, Text, B11, Three Dots
 HideTrayTip()
 MsgBox,,Coords, %B11X% %B11Y%
 LogEntry("Save button coordinates logged: " . B11X . "," . B11Y)
-Return
-
-B12:	; Save btn
-GuiControl, Text, B12, Working
-TrayTip, Waiting..., Waiting for save button X`,Y coords, 30, 1
-KeyWait, Enter, D
-MouseGetPos, B12X, B12Y
-GuiControl,, B12X, %B12X%
-GuiControl,, B12Y, %B12Y%
-GuiControl, Text, B12, Save Btn
-HideTrayTip()
-MsgBox,,Coords, %B12X% %B12Y%
-LogEntry("Save button coordinates logged: " . B12X . "," . B12Y)
 Return
 
 B1P:
@@ -824,8 +808,8 @@ Loop, % globNewIDArray.Length()
 		}
 		Close:
 		Sleep, SaveTimeoutms
-		LogEntry("Clicking on Close btn at: (" . B12X . "," . B12Y . ")")
-		MouseClick,, %B12X%, %B12Y%
+		LogEntry("Clicking on Close btn")
+		ControlClick, Close, Save Calls
 	}
 	EndStep:
 	LoopElapsed := A_TickCount - LoopTime
