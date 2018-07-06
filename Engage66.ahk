@@ -561,7 +561,14 @@ Loop, % globNewIDArray.Length()
 			HideTrayTip()
 		}
 		else
+		{
 			MsgBox,, Missing Binary, Missing GECQueryUpdater.exe
+			FileSelectFile, GECQueryFileLoc, 1, , Select GECQueryUpdater Location, *.exe
+			LogEntry("Running CompleteID script to modify DB")
+			TrayTip, Waiting..., Waiting for script to push to DB, 3, 1
+			RunWait %ComSpec% /c ""%GECQueryFileLoc%" "%ComIDFile%"",,Hide
+			HideTrayTip()
+		}
 		LogEntry("Left clicking on updated query at (" . B01X . "," B01Y . ")")
 		MouseClick, L, %B01X%, %B01Y%  ; Left click on query
 		StartTime := A_TickCount
@@ -588,6 +595,7 @@ Loop, % globNewIDArray.Length()
 					break
 			}
 		}
+		HideTrayTip()
 	}
 	StartTime := A_TickCount
 	ElapsedTime := 0
