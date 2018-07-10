@@ -39,18 +39,18 @@ Gui, add, Button, gB1P x195 y35, GoTo
 Gui, add, Button, gB3 vB3 x15 y65, SegID
 Gui, add, Edit, w50 h100 r1 x85 y65 vB03X
 Gui, add, Edit, w50 h100 r1 x140 y65 vB03Y
-Gui, add, Button, gB4 vB4 x15 y95, SaveRun
-Gui, add, Edit, w50 h100 r1 x85 y95 vB04X
-Gui, add, Edit, w50 h100 r1 x140 y95 vB04Y
-Gui, add, Button, gB5 vB5 x15 y125, GroupBy:
-Gui, add, Edit, w50 h100 r1 x85 y125 vB05X
-Gui, add, Edit, w50 h100 r1 x140 y125 vB05Y
-Gui, add, Button, gB6 vB6 x15 y155, Top Result
-Gui, add, Edit, w50 h100 r1 x85 y155 vB06X
-Gui, add, Edit, w50 h100 r1 x140 y155 vB06Y
-Gui, add, Button, gB7 vB7 x15 y185, Save Calls
-Gui, add, Edit, w50 h100 r1 x85 y185 vB07X
-Gui, add, Edit, w50 h100 r1 x140 y185 vB07Y
+;Gui, add, Button, gB4 vB4 x15 y95, SaveRun
+;Gui, add, Edit, w50 h100 r1 x85 y95 vB04X
+;Gui, add, Edit, w50 h100 r1 x140 y95 vB04Y
+Gui, add, Button, gB5 vB5 x15 y95, GroupBy:
+Gui, add, Edit, w50 h100 r1 x85 y95 vB05X
+Gui, add, Edit, w50 h100 r1 x140 y95 vB05Y
+Gui, add, Button, gB6 vB6 x15 y125, Top Result
+Gui, add, Edit, w50 h100 r1 x85 y125 vB06X
+Gui, add, Edit, w50 h100 r1 x140 y125 vB06Y
+Gui, add, Button, gB7 vB7 x15 y155, Save Calls
+Gui, add, Edit, w50 h100 r1 x85 y155 vB07X
+Gui, add, Edit, w50 h100 r1 x140 y155 vB07Y
 
 Gui, add, Button, w100 x300 y50 hwndhbuttonrunidprep vRunIDPrep gRunIDPrep, RunIDPrep
 Gui, add, Button, w100 x300 y80 hwndhbuttonrunrobot vRunRobot gRunRobot, RunRobot
@@ -516,10 +516,10 @@ Loop, %countfiles%
 		LogEntry("Click on SegID Box")
 		MouseGetPos,,,,SegIDControl
 		ControlSetText,%SegIDControl%, % IDvar, Advanced Query
-		TrayTip, Insert, Inserting SegID's, %Timeout%, 1
 		LogEntry("Inserting " . IDvar)
+		TrayTip, Insert, Inserting SegID's, %Timeout%, 1
 		LogEntry("Click on 'Save&Run'")
-		MouseClick,, %B04X%, %B04Y%	; Click on 'Save&Run'
+		ControlClick, Save & Run, Advanced Query
 		HideTrayTip()
 		LogEntry("Waiting for '" . Title . "' to become active")
 		TrayTip, Waiting..., Waiting for %Title%, %Timeout%, 1
