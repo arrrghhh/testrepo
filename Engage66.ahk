@@ -60,7 +60,7 @@ Gui, add, Edit, w30 x340 y110 vTimeout, 50
 Gui, add, Text, x375 y115, (sec)
 
 Gui, add, Text, x245 y140, SaveCalls Timeout
-Gui, add, Edit, w30 x340 y135 vSaveTimeout, 6
+Gui, add, Edit, w30 x340 y135 vSaveTimeout, 0
 Gui, add, Text, x375 y140, (sec)
 
 Gui, add, radio, x250 y170 vSegID Group checked, SegmentID
@@ -69,9 +69,10 @@ Gui, add, radio, x250 y195 vComID, CompleteID
 Gui, add, radio, x340 y170 vEngage Group, Engage 6.4+
 Gui, add, radio, x340 y195 vNIM, NIM, 6.3
 
+Gui, add, Text, x180 y220, Window Title:
 Gui, add, Edit, x250 y215 vTitle, Application Suite
 
-Gui, Add, Progress, x10 y245 w400 h18 vMyProgress
+Gui, Add, Progress, x20 y245 w400 h18 vMyProgress
 Gui, Add, Text, x15 y270 w300 vLoadingTxt
 
 Gui, Tab, 2
@@ -339,6 +340,7 @@ LogEntry("Save button coordinates logged: " . B11X . "," . B11Y)
 Return
 
 B1P:
+Gui, Submit, NoHide
 WinActivate, %Title%
 MouseMove, %B01X%, %B01Y%
 MouseClick, R, %B01X%, %B01Y%
@@ -347,7 +349,6 @@ Return
 
 RunIDPrep:
 GuiControl, Text, RunIDPrep, RunningPrep
-Global globIDArray := []
 LogEntry("Run ID Prep Start (from file:) " . SelectedFile)
 If !FileExist(SelectedFile)
 {
@@ -356,8 +357,13 @@ If !FileExist(SelectedFile)
 	GuiControl, Text, RunIDPrep, RunIDPrep
 	Return
 }
+If !FileExist(A_ScriptDir . "\Processing")
+{
+	LogEntry("Processing folder missing, likely first run - creating missing Processing folder")
+	FileCreateDir, % A_ScriptDir . "\Processing"
+}
 LogEntry("Count number of lines")
-FileRead File, %SelectedFile%
+FileRead, File, %SelectedFile%
 StringReplace File, File, `n, `n, All UseErrorLevel
 TotalLines := ErrorLevel
 TotalLines++	; Add one as it was always one short since the last line did not have a `n at the end... Of course if there is an emtpy line it will count the extra emtpy line.  Oh well.
@@ -365,14 +371,13 @@ LogEntry("Total number of SegID's is: " . TotalLines)
 GuiControl, +Range0-%TotalLines%, MyProgress
 Gui, Show
 FileRead, InputFile, %SelectedFile%
-globIDArray := StrSplit(InputFile, "`n")
+IDArray := StrSplit(InputFile, "`n")
 GuiControl, Text, LoadingTxt, Array Complete: %TotalLines%
 LogEntry("Loaded ID's from " . SelectedFile)
-Global globNewIDArray :=
 LogEntry("Before FuncLoop")
 GuiControl, Text, LoadingTxt, Concatenation...
-globNewIDArray := FuncLoop(globIDArray)
-LogEntry("After FuncLoop - globNewIDArray")
+FuncLoop(IDArray)
+LogEntry("After FuncLoop")
 GuiControl, Text, LoadingTxt, Concatenation...Complete
 GuiControl, Text, RunIDPrep, Run ID Prep
 Return
@@ -380,10 +385,13 @@ Return
 RunRobot:
 Gui, Submit, NoHide
 GuiControl, Text, RunRobot, RunningRobot
-If (globIDArray[1] = "")
+countfiles := 0
+Loop, Files, Processing\*.txt
+   countfiles += 1
+If (countfiles < 1)
 {
 	MsgBox,, Robot Error, Run Robot failed - did you prep the ID's first?
-	LogEntry("FAILURE - Array slot 1 empty...Returning")
+	LogEntry("FAILURE - countfiles var (" . countfiles . ") less than one...Returning")
 	GuiControl, Text, RunRobot, RunRobot
 	Return
 }
@@ -414,13 +422,11 @@ Timeoutms := Timeout*1000
 SaveTimeoutms := SaveTimeout*1000
 TotalTime := A_TickCount
 TotalElapsed := 0
-TotalIDs := globIDArray.Length()
-TotalArray := globNewIDArray.Length()
-GuiControl, +Range0-%TotalArray%, MyProgress
+GuiControl, +Range0-%countfiles%, MyProgress
 GuiControl, , MyProgress, 0
-GuiControl, Text, LoadingTxt, Robot Working: 0 of %TotalArray%
-LogEntry("Robot Starting...0 of " . TotalArray)
-Loop, % globNewIDArray.Length()
+GuiControl, Text, LoadingTxt, Robot Working: 0 of %countfiles%
+LogEntry("Robot Starting...0 of " . countfiles)
+Loop, %countfiles%
 {
 	Gui, Submit, NoHide
 	DriveSpaceFree, FreeSpaceArchive, %UNCPath%
@@ -437,18 +443,25 @@ Loop, % globNewIDArray.Length()
 			Return
 		}
 	}
+	CurFile := 
+	Loop, Files, Processing\*.txt
+	{
+		CurFile := A_LoopFilePath
+		break
+	}
+	FileRead, IDvar, %CurFile%
 	LoopTime := A_TickCount
 	LoopElapsed := 0
 	RightClick :=
 	GroupByBoxColor :=
 	LogEntry("Waiting for '" . Title . "' to become active")
-	TrayTip, Waiting..., Waiting for %Title%, 3, 1
+	TrayTip, Waiting..., Waiting for %Title%, %Timeout%, 1
 	WinWaitActive, %Title%,,%Timeout%
 	If ErrorLevel
 	{
 		LogEntry("Timeout waiting for " . Title)
 		MsgBox,, Timeout, Timeout, please focus the %Title% window
-		TrayTip, Waiting..., Waiting for %Title%, 3, 1
+		TrayTip, Waiting..., Waiting for %Title%, %Timeout%, 1
 		WinWaitActive, %Title%,,%Timeout%
 		If ErrorLevel
 		{
@@ -465,7 +478,7 @@ Loop, % globNewIDArray.Length()
 		LogEntry("SegmentID selected, running routine for SegmentID")
 		MouseClick, R, %B01X%, %B01Y%  ; Right click on query
 		LogEntry("Right click on query at (" . B01X . "`," . B01Y . ")")
-		TrayTip, Query, Right-Click on Query, 3, 1
+		TrayTip, Query, Right-Click on Query, %Timeout%, 1
 		LogEntry("Before While loop - waiting for menu")
 		StartTime := A_TickCount
 		ElapsedTime := 0
@@ -480,7 +493,7 @@ Loop, % globNewIDArray.Length()
 		HideTrayTip()
 		SkipClickEdit:
 		LogEntry("Waiting for Advanced Query window")
-		TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
+		TrayTip, Waiting..., Waiting for Advanced Query Window, %Timeout%, 1
 		WinWait, Advanced Query,,%Timeout%
 		WinActivate, Advanced Query
 		WinWaitActive, Advanced Query,,%Timeout%
@@ -488,7 +501,7 @@ Loop, % globNewIDArray.Length()
 		{
 			LogEntry("Timeout waiting for Advanced Query Window")
 			MsgBox,, Timeout, Timeout waiting for Advanced Query Window, was edit pressed?  Manually edit query and press OK.
-			TrayTip, Waiting..., Waiting for Advanced Query Window, 3, 1
+			TrayTip, Waiting..., Waiting for Advanced Query Window, %Timeout%, 1
 			WinWaitActive, Advanced Query,,%Timeout%
 			If ErrorLevel
 			{
@@ -502,14 +515,14 @@ Loop, % globNewIDArray.Length()
 		MouseClick,, %B03X%, %B03Y% ; Click on SegID box
 		LogEntry("Click on SegID Box")
 		MouseGetPos,,,,SegIDControl
-		ControlSetText,%SegIDControl%, % globNewIDArray[A_Index], Advanced Query
-		TrayTip, Insert, Inserting SegID's, 3, 1
-		LogEntry("Inserting " . globNewIDArray[A_Index])
+		ControlSetText,%SegIDControl%, % IDvar, Advanced Query
+		TrayTip, Insert, Inserting SegID's, %Timeout%, 1
+		LogEntry("Inserting " . IDvar)
 		LogEntry("Click on 'Save&Run'")
 		MouseClick,, %B04X%, %B04Y%	; Click on 'Save&Run'
 		HideTrayTip()
 		LogEntry("Waiting for '" . Title . "' to become active")
-		TrayTip, Waiting..., Waiting for %Title%, 3, 1
+		TrayTip, Waiting..., Waiting for %Title%, %Timeout%, 1
 		WinWait, %Title%,,%Timeout%
 		WinActivate, %Title%
 		WinWaitActive, %Title%,,%Timeout%
@@ -517,7 +530,7 @@ Loop, % globNewIDArray.Length()
 		{
 			LogEntry("Timeout waiting for " . Title)
 			MsgBox,, Timeout, Timeout waiting for %Title%, please focus the %Title% (was 'Save & Run' pressed?)
-			TrayTip, Waiting..., Waiting for %Title%, 3, 1
+			TrayTip, Waiting..., Waiting for %Title%, %Timeout%, 1
 			WinWaitActive, %Title%,,%Timeout%
 			If ErrorLevel
 			{
@@ -534,13 +547,11 @@ Loop, % globNewIDArray.Length()
 		LogEntry("CompleteID selected, running routine for CompleteID")
 		If FileExist(ComIDFile)
 			FileDelete, %ComIDFile%
-		Sleep, 200
-		FileAppend, % globNewIDArray[A_Index], %ComIDFile%
-		Sleep, 300
+		FileCopy, %CurFile%, %ComIDFile%
 		if FileExist("GECQueryUpdater.exe")
 		{
 			LogEntry("Running CompleteID script to modify DB")
-			TrayTip, Waiting..., Waiting for script to push to DB, 3, 1
+			TrayTip, Waiting..., Waiting for script to push to DB, %Timeout%, 1
 			RunWait %ComSpec% /c ""GECQueryUpdater.exe" "%ComIDFile%"",,Hide
 			HideTrayTip()
 		}
@@ -549,7 +560,7 @@ Loop, % globNewIDArray.Length()
 			MsgBox,, Missing Binary, Missing GECQueryUpdater.exe
 			FileSelectFile, GECQueryFileLoc, 1, , Select GECQueryUpdater Location, *.exe
 			LogEntry("Running CompleteID script to modify DB")
-			TrayTip, Waiting..., Waiting for script to push to DB, 3, 1
+			TrayTip, Waiting..., Waiting for script to push to DB, %Timeout%, 1
 			RunWait %ComSpec% /c ""%GECQueryFileLoc%" "%ComIDFile%"",,Hide
 			HideTrayTip()
 		}
@@ -558,7 +569,7 @@ Loop, % globNewIDArray.Length()
 		StartTime := A_TickCount
 		ElapsedTime := 0
 		ErrorTimeout := 0
-		TrayTip, Waiting..., Waiting for query to start, 3, 1
+		TrayTip, Waiting..., Waiting for query to start, %Timeout%, 1
 		While (GroupByBoxColor != 0xCED3D6 or GroupByBoxColor != 0xD6D3CE)
 		{
 			If (ElapsedTime > Timeoutms)
@@ -584,7 +595,7 @@ Loop, % globNewIDArray.Length()
 	StartTime := A_TickCount
 	ElapsedTime := 0
 	ErrorTimeout := 0
-	TrayTip, Waiting..., Waiting for query to finish, 3, 1
+	TrayTip, Waiting..., Waiting for query to finish, %Timeout%, 1
 	While (GroupByBoxColor != 0xFFFFFF) ; Wait for GroupBy to go white (indicates query is done)
 	{
 		If (ElapsedTime > Timeoutms)
@@ -605,6 +616,7 @@ Loop, % globNewIDArray.Length()
 	MouseClick,, %B06X%, %B06Y%
 	LogEntry("Sending ctrl-a")
 	Send ^a
+	TrayTip, Click, Clicking on Save Calls button..., 10, 1
 	LogEntry("Click Save Calls (" . B07X . "`," . B07Y . ")")
 	MouseClick,, %B07X%, %B07Y%
 	LogEntry("Wait for either Save Calls window OR the 'No Recordings Found' window")
@@ -619,8 +631,9 @@ Loop, % globNewIDArray.Length()
 		GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %TotalArray%
 		continue
 	}
+	HideTrayTip()
 	LogEntry("Wait for SaveCalls dialog")
-	TrayTip, Waiting..., Waiting for Save Calls Dialog box..., 3, 1
+	TrayTip, Waiting..., Waiting for Save Calls Dialog box..., %Timeout%, 1
 	WinWait, Save Calls,,%Timeout%
 	Sleep, 200
 	WinActivate, Save Calls
@@ -629,7 +642,7 @@ Loop, % globNewIDArray.Length()
 	{
 		LogEntry("Timeout waiting for Save Calls Dialog")
 		MsgBox,, Timeout, Timeout waiting for Save Calls Dialog - ensure calls are selected and press 'save calls' button, then press OK.
-		TrayTip, Waiting..., Waiting for Save Calls Dialog box..., 3, 1
+		TrayTip, Waiting..., Waiting for Save Calls Dialog box..., %Timeout%, 1
 		WinWaitActive, Save Calls,,%Timeout%
 		If ErrorLevel
 		{
@@ -653,7 +666,7 @@ Loop, % globNewIDArray.Length()
 		LogEntry("Click on WAV radio btn")
 		MouseClick,, %B10X%,%B10Y%
 		LogEntry("Click on Save Btn")
-		TrayTip, Click, Clicked Save, 3, 1
+		TrayTip, Click, Clicked Save, %Timeout%, 1
 		MouseMove, %B08X%, %B08Y%
 		LogEntry("Move mouse to Location input, checking for 'info' screen...")
 		MouseGetPos,,,,InfoControl
@@ -668,7 +681,7 @@ Loop, % globNewIDArray.Length()
 			Send, {Esc}
 		}
 		LogEntry("Waiting for 'Saving' Dialog box")
-		TrayTip, Waiting..., Waiting for Save Calls to show..., 3, 1
+		TrayTip, Waiting..., Waiting for Save Calls to show..., %Timeout%, 1
 		WinWait, Saving,,%Timeout%
 		WinActivate, Saving
 		WinWaitActive, Saving,,%Timeout%
@@ -676,7 +689,7 @@ Loop, % globNewIDArray.Length()
 		{
 			LogEntry("Timeout waiting for Saving Dialog")
 			MsgBox,, Timeout, Timeout waiting for Saving Dialog - was 'Save Calls' pressed?
-			TrayTip, Waiting..., Waiting for Save Calls to show..., 3, 1
+			TrayTip, Waiting..., Waiting for Save Calls to show..., %Timeout%, 1
 			WinWaitActive, Saving,,%Timeout%
 			If ErrorLevel
 			{
@@ -712,7 +725,7 @@ Loop, % globNewIDArray.Length()
 		Send, {Space}
 		LogEntry("Space to close the window...")
 		WaitAppEnd:
-		TrayTip, Waiting..., Wait for %Title%, 3, 1
+		TrayTip, Waiting..., Wait for %Title%, %Timeout%, 1
 		WinWait, %Title%,,%Timeout%
 		WinActivate, %Title%
 		WinWaitActive, %Title%,,%Timeout%
@@ -745,12 +758,12 @@ Loop, % globNewIDArray.Length()
 		LogEntry("Click on three dot button")
 		MouseClick,, %B11X%, %B11Y%
 		LogEntry("Waiting for 'Save as' dialog")
-		TrayTip, Waiting..., Waiting for Save As dialog..., 3, 1
+		TrayTip, Waiting..., Waiting for Save As dialog..., %Timeout%, 1
 		WinWaitActive, Save as,,%Timeout%
 		If ErrorLevel
 		{
 			MsgBox,, Timeout, Timeout waiting for 'save as' dialog
-			TrayTip, Waiting..., Waiting for Save As dialog..., 3, 1
+			TrayTip, Waiting..., Waiting for Save As dialog..., %Timeout%, 1
 			WinWaitActive, Save as,, %Timeout%
 			If ErrorLevel
 			{
@@ -815,10 +828,13 @@ Loop, % globNewIDArray.Length()
 	LoopElapsed := A_TickCount - LoopTime
 	LoopElapsed := LoopElapsed / 1000
 	LoopElapsed := Round(LoopElapsed)
-	LogEntry("Completed loop: " . A_Index . " of " . globNewIDArray.Length() . " in " . LoopElapsed . "sec.")
-	TrayTip, Loop End, End of loop %A_Index% of %TotalArray%, 3, 1
+	LogEntry("Completed loop: " . A_Index . " of " . countfiles . " in " . LoopElapsed . "sec.")
+	If !FileExist(A_ScriptDir . "\Processed")
+		FileCreateDir, % A_ScriptDir . "\Processed"
+	FileMove, %CurFile%, %A_ScriptDir%\Processed\
+	TrayTip, Loop End, End of loop %A_Index% of %countfiles%, %Timeout%, 1
 	GuiControl,, MyProgress, %A_Index%
-	GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %TotalArray%
+	GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %countfiles%
 }
 TotalElapsed := A_TickCount - TotalTime
 TotalElapsed := TotalElapsed / 1000
@@ -830,18 +846,18 @@ Return
 
 FuncLoop(CompleteIDArray)
 {
-	LogEntry("In FuncLoop - Setting up vars")
+	LogEntry("In FuncLoop - Setting up files")
 	GuiControlGet, ComID
 	NewIDArray := []
 	IDArray := []
 	ID :=
 	Increment := 1
-	TotalArray := CompleteIDArray.length()
 	for k, v in CompleteIDArray
 	{
 		NewIDArray.Push(v)
-		GuiControl, , MyProgress, %A_Index% 
-		GuiControl, Text, LoadingTxt, Concatenation...%k% of %TotalArray%
+		GuiControl, , MyProgress, %A_Index%
+		ArrayLength := CompleteIDArray.length()
+		GuiControl, Text, LoadingTxt, Concatenation...  %k% of %ArrayLength%
 		;check if we are at the 20th item OR if we are at the last item (which could be a weird number)
 		if (NewIDArray.length()=20 || a_index = CompleteIDArray.length())
 		{
@@ -859,7 +875,10 @@ FuncLoop(CompleteIDArray)
 					ID := ID NewIDArray[k2] "`n"
 				}
 			}
-			IDArray[Increment] := ID
+			ProcessingFile := "Processing\" . Increment . ".txt"
+			If FileExist(ProcessingFile)
+				FileDelete, %ProcessingFile%
+			FileAppend, %ID%, %ProcessingFile%
 			LogEntry("Add to IDArray at index: " . Increment . " Create " . IDArray[Increment])
 			Increment++
 			ID:=
