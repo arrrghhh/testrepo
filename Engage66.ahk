@@ -63,11 +63,11 @@ Gui, add, Text, x245 y140, SaveCalls Timeout
 Gui, add, Edit, w30 x340 y135 vSaveTimeout, 0
 Gui, add, Text, x375 y140, (sec)
 
-Gui, add, radio, x250 y170 vSegID Group checked, SegmentID
-Gui, add, radio, x250 y195 vComID, CompleteID
+Gui, add, radio, x250 y170 gSegID vSegID Group checked, SegmentID
+Gui, add, radio, x250 y195 gComID vComID, CompleteID
 
-Gui, add, radio, x340 y170 vEngage Group, Engage 6.4+
-Gui, add, radio, x340 y195 vNIM, NIM, 6.3
+Gui, add, radio, x340 y170 gEngage vEngage Group, Engage 6.4+
+Gui, add, radio, x340 y195 gNIM vNIM, NIM, 6.3
 
 Gui, add, Text, x180 y220, Window Title:
 Gui, add, Edit, x250 y215 vTitle, Application Suite
@@ -89,6 +89,16 @@ Gui, add, Button, gB11 vB11 x15 y125, Three Dots
 Gui, add, Edit, w50 h100 r1 x85 y125 vB11X
 Gui, add, Edit, w50 h100 r1 x140 y125 vB11Y
 Gui, add, Edit, w300 h100 r1 x15 y195 vUNCpath, C:\temp
+
+GuiControl, Hide, B8
+GuiControl, Hide, B08X
+GuiControl, Hide, B08Y
+GuiControl, Hide, B9
+GuiControl, Hide, B09X
+GuiControl, Hide, B09Y
+GuiControl, Hide, B11
+GuiControl, Hide, B11X
+GuiControl, Hide, B11Y
 
 Array := []
 Loop, read, %ConfigFile%
@@ -193,6 +203,42 @@ If FileExist(ConfigFile)
 	MsgBox,, Save Config, Save Config Task Complete
 Else
 	MsgBox,, Save Error, Error running Save Config - permissions to config folder?
+Return
+
+SegID:
+GuiControl, Show, B3
+GuiControl, Show, B03X
+GuiControl, Show, B03Y
+Return
+
+ComID:
+GuiControl, Hide, B3
+GuiControl, Hide, B03X
+GuiControl, Hide, B03Y
+Return
+
+Engage:
+GuiControl, Hide, B11
+GuiControl, Hide, B11X
+GuiControl, Hide, B11Y
+GuiControl, Show, B8
+GuiControl, Show, B08X
+GuiControl, Show, B08Y
+GuiControl, Show, B9
+GuiControl, Show, B09X
+GuiControl, Show, B09Y
+Return
+
+NIM:
+GuiControl, Show, B11
+GuiControl, Show, B11X
+GuiControl, Show, B11Y
+GuiControl, Hide, B8
+GuiControl, Hide, B08X
+GuiControl, Hide, B08Y
+GuiControl, Hide, B9
+GuiControl, Hide, B09X
+GuiControl, Hide, B09Y
 Return
 
 B1:		; Query
