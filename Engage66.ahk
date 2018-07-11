@@ -52,7 +52,7 @@ Gui, add, Button, gB7 vB7 x15 y155, Save Calls
 Gui, add, Edit, w50 h100 r1 x85 y155 vB07X
 Gui, add, Edit, w50 h100 r1 x140 y155 vB07Y
 
-Gui, add, Button, w100 x300 y50 hwndhbuttonrunidprep vRunIDPrep gRunIDPrep, RunIDPrep
+Gui, add, Button, w100 x300 y50 hwndhbuttonrunidprep vRunIDPrep gRunIDPrep, Run ID Prep
 Gui, add, Button, w100 x300 y80 hwndhbuttonrunrobot vRunRobot gRunRobot, RunRobot
 
 Gui, add, Text, x255 y115, General Timeout
@@ -119,6 +119,14 @@ If FileExist(ConfigFile)
 			GuiControl,, B%Num%Y, % B%Num%Y
 		}
 	}
+}
+countfiles := 0
+Loop, Files, Processing\*.txt
+   countfiles += 1
+If (countfiles >= 1)
+{
+	MsgBox,, Processing, Files exist in Processing folder!  Continue robot or overwrite with ID prep.
+	LogEntry("Processing files exist - countfiles var (" . countfiles . ") more than or equal to one...User choice")
 }
 Gui, -dpiscale
 Gui, Show,, EliteKeep Extraction
@@ -414,6 +422,21 @@ If !FileExist(A_ScriptDir . "\Processing")
 {
 	LogEntry("Processing folder missing, likely first run - creating missing Processing folder")
 	FileCreateDir, % A_ScriptDir . "\Processing"
+}
+countfiles := 0
+Loop, Files, Processing\*.txt
+   countfiles += 1
+If (countfiles >= 1)
+{
+	MsgBox,4, Processing, Files exist in Processing folder!  Continue overwrite?
+	LogEntry("Processing files exist - countfiles var (" . countfiles . ") more than or equal to one...User choice")
+	IfMsgBox Yes
+		FileDelete, Processing\*.*
+	IfMsgBox No
+	{
+		GuiControl, Text, RunIDPrep, Run ID Prep
+		Return
+	}
 }
 LogEntry("Count number of lines")
 FileRead, File, %SelectedFile%
