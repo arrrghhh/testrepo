@@ -101,20 +101,23 @@ GuiControl, Hide, B11X
 GuiControl, Hide, B11Y
 
 Array := []
-Loop, read, %ConfigFile%
+If FileExist(ConfigFile)
 {
-	Array := StrSplit(A_LoopReadLine, ":")
-	XorY := SubStr(Array[1], 4, 1)
-	Num := SubStr(Array[1], 2, 2)
-	If (XorY = "X")
+	Loop, read, %ConfigFile%
 	{
-		B%Num%X := Array[2]
-		GuiControl,, B%Num%X, % B%Num%X
-	}
-	Else
-	{
-		B%Num%Y := Array[2]
-		GuiControl,, B%Num%Y, % B%Num%Y
+		Array := StrSplit(A_LoopReadLine, ":")
+		XorY := SubStr(Array[1], 4, 1)
+		Num := SubStr(Array[1], 2, 2)
+		If (XorY = "X")
+		{
+			B%Num%X := Array[2]
+			GuiControl,, B%Num%X, % B%Num%X
+		}
+		Else
+		{
+			B%Num%Y := Array[2]
+			GuiControl,, B%Num%Y, % B%Num%Y
+		}
 	}
 }
 Gui, -dpiscale
