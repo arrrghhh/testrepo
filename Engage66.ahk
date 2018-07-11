@@ -82,13 +82,13 @@ Gui, add, Edit, w50 h100 r1 x140 y35 vB08Y
 Gui, add, Button, gB9 vB9 x15 y65, WAV Radio
 Gui, add, Edit, w50 h100 r1 x85 y65 vB09X
 Gui, add, Edit, w50 h100 r1 x140 y65 vB09Y
-Gui, add, Button, gB10 vB10 x15 y95, Save Btn
-Gui, add, Edit, w50 h100 r1 x85 y95 vB10X
-Gui, add, Edit, w50 h100 r1 x140 y95 vB10Y
-Gui, add, Button, gB11 vB11 x15 y125, Three Dots
-Gui, add, Edit, w50 h100 r1 x85 y125 vB11X
-Gui, add, Edit, w50 h100 r1 x140 y125 vB11Y
-Gui, add, Edit, w300 h100 r1 x15 y195 vUNCpath, C:\temp
+;Gui, add, Button, gB10 vB10 x15 y95, Save Btn
+;Gui, add, Edit, w50 h100 r1 x85 y95 vB10X
+;Gui, add, Edit, w50 h100 r1 x140 y95 vB10Y
+Gui, add, Button, gB11 vB11 x15 y95, Three Dots
+Gui, add, Edit, w50 h100 r1 x85 y95 vB11X
+Gui, add, Edit, w50 h100 r1 x140 y95 vB11Y
+Gui, add, Edit, w300 h100 r1 x15 y125 vUNCpath, C:\temp
 
 GuiControl, Hide, B8
 GuiControl, Hide, B08X
@@ -716,7 +716,7 @@ Loop, %countfiles%
 		MouseClick,, %B10X%,%B10Y%
 		LogEntry("Click on Save Btn")
 		TrayTip, Click, Clicked Save, %Timeout%, 1
-		MouseMove, %B08X%, %B08Y%
+		ControlClick, Save, Save Calls
 		LogEntry("Move mouse to Location input, checking for 'info' screen...")
 		MouseGetPos,,,,InfoControl
 		Sleep, 500
