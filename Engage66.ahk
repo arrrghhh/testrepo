@@ -439,7 +439,7 @@ Loop, %countfiles%
 		{
 			LogEntry("User chose to stop based on low disk space")
 			GuiControl, Text, RunRobot, RunRobot
-			GuiControl, Text, LoadingTxt, Robot Ended. %A_Index% of %TotalArray%
+			GuiControl, Text, LoadingTxt, Robot Ended. %A_Index% of %countfiles%
 			Return
 		}
 	}
@@ -622,13 +622,16 @@ Loop, %countfiles%
 	LogEntry("Wait for either Save Calls window OR the 'No Recordings Found' window")
 	WinWait, ahk_group WindowGroup,, %Timeout%
 	LogEntry("Check which window we have...")
-	If WinActive("","styledButton4")
+	If WinActive(,"styledButton4")
 	{
 		LogEntry("In IF statement for info box - means there are no recordings")
 		WinActivate,, Information
 		Send, {Esc}
 		GuiControl,, MyProgress, %A_Index%
-		GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %TotalArray%
+		GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %countfiles%
+		If !FileExist(A_ScriptDir . "\Failed")
+			FileCreateDir, % A_ScriptDir . "\Failed"
+		FileMove, %CurFile%, %A_ScriptDir%\Failed\
 		continue
 	}
 	HideTrayTip()
