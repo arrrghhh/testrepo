@@ -233,7 +233,7 @@ GuiControl, Show, B09Y
 Return
 
 NIM:
-LogEntry("NIM/6.3 selected, make sure to show the 3 dots and hide LocInput/WAV radio"
+LogEntry("NIM/6.3 selected, make sure to show the 3 dots and hide LocInput/WAV radio")
 GuiControl, Show, B11
 GuiControl, Show, B11X
 GuiControl, Show, B11Y
