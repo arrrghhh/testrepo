@@ -713,12 +713,11 @@ Loop, %countfiles%
 		LogEntry("Inject save calls path (" . UNCPath . ") to location input box")
 		MouseClick,, %B09X%,%B09Y%
 		LogEntry("Click on WAV radio btn")
-		MouseClick,, %B10X%,%B10Y%
-		LogEntry("Click on Save Btn")
 		TrayTip, Click, Clicked Save, %Timeout%, 1
 		ControlClick, Save, Save Calls
-		LogEntry("Move mouse to Location input, checking for 'info' screen...")
+		LogEntry("Click on Save Btn")
 		MouseGetPos,,,,InfoControl
+		LogEntry("Move mouse to Location input, checking for 'info' screen...")
 		Sleep, 500
 		HideTrayTip()
 		InfoBox := WinExist("ahk_exe PresentationHost.exe","styledButton4")
