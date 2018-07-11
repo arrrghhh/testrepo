@@ -206,18 +206,21 @@ Else
 Return
 
 SegID:
+LogEntry("SegID selected, make sure it is shown.")
 GuiControl, Show, B3
 GuiControl, Show, B03X
 GuiControl, Show, B03Y
 Return
 
 ComID:
+LogEntry("CompleteID selected, make sure SegID is hidden.")
 GuiControl, Hide, B3
 GuiControl, Hide, B03X
 GuiControl, Hide, B03Y
 Return
 
 Engage:
+LogEntry("Engage 6.4+ selected, make sure to hide 3 dots and show LocInput/WAV radio")
 GuiControl, Hide, B11
 GuiControl, Hide, B11X
 GuiControl, Hide, B11Y
@@ -230,6 +233,7 @@ GuiControl, Show, B09Y
 Return
 
 NIM:
+LogEntry("NIM/6.3 selected, make sure to show the 3 dots and hide LocInput/WAV radio"
 GuiControl, Show, B11
 GuiControl, Show, B11X
 GuiControl, Show, B11Y
