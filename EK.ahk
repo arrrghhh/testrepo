@@ -9,15 +9,13 @@ SetTitleMatchMode, RegEx
 
 Global SelectedFile := A_ScriptDir . "\config\ID.txt"
 ConfigFile := A_ScriptDir . "\config\EKconfig.txt"
-Global LogFile := A_ScriptDir . "\log\Log.txt"
+Global LogFile := A_ScriptDir . "\logs\GEC_RobotExtraction_" . A_YYYY . "-" . A_MM . "-" A_DD . ".log"
 ComIDFile := A_ScriptDir . "\config\ComID.txt"
 Global ComID := 0
 
-If !FileExist(LogFile)
-{
-	If !FileExist(A_ScriptDir . "\log")
-		FileCreateDir, % A_ScriptDir . "\log"
-}
+If !FileExist(A_ScriptDir . "\logs")
+	FileCreateDir, % A_ScriptDir . "\logs"
+
 LogEntry("Application Startup")
 
 Menu, FileMenu, Add, Save Config, SaveConfig
