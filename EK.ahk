@@ -401,6 +401,13 @@ Return
 B1P:
 Gui, Submit, NoHide
 WinActivate, %Title%
+WinWaitActive, %Title%,,2
+If ErrorLevel
+{
+	LogEntry("Missing window title: " . Title . " could not focus.")
+	MsgBox,, No Window, Could not focus window with title: %Title%
+	Return
+}
 MouseMove, %B01X%, %B01Y%
 MouseClick, R, %B01X%, %B01Y%
 LogEntry("Right click on: (" . B01X . "," . B01Y . ")")
