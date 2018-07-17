@@ -443,7 +443,7 @@ If ErrorLevel
 	MsgBox,, No Query Window, Could not find Advanced Query window to move the mouse to the SegID box...
 	Return
 }
-SendMode Event
+SendMode Event ; Cannot change mouse speed (the 100 is the slowest) in Input mode...
 MouseMove, %B03X%, %B03Y%, 100
 SendMode Input
 LogEntry("Move mouse to SegID Box: (" . B03X . "," . B03Y . ")")
