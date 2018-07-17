@@ -44,6 +44,7 @@ Gui, add, Button, gB3P x195 y65, GoTo
 Gui, add, Button, gB5 vB5 x15 y95, GroupBy:
 Gui, add, Edit, w50 h100 r1 x85 y95 vB05X
 Gui, add, Edit, w50 h100 r1 x140 y95 vB05Y
+Gui, add, Button, gB5P x195 y95, GoTo
 Gui, add, Button, gB6 vB6 x15 y125, Top Result
 Gui, add, Edit, w50 h100 r1 x85 y125 vB06X
 Gui, add, Edit, w50 h100 r1 x140 y125 vB06Y
@@ -447,6 +448,23 @@ SendMode Event ; Cannot change mouse speed (the 100 is the slowest) in Input mod
 MouseMove, %B03X%, %B03Y%, 100
 SendMode Input
 LogEntry("Move mouse to SegID Box: (" . B03X . "," . B03Y . ")")
+Return
+
+B5P:
+Gui, Submit, NoHide
+WinActivate, %Title%
+WinWaitActive, %Title%,,2
+If ErrorLevel
+{
+	LogEntry("Missing window title: " . Title . " could not focus.")
+	MsgBox,, No Window, Could not focus window with title: %Title%
+	Return
+}
+MouseMove, %B05X%, %B05Y%
+MouseClick, L, %B05X%, %B05Y%
+Sleep, 500
+MouseClick, L, %B05X%, %B05Y%
+LogEntry("Move & (left) clicked on: (" . B05X . "," . B05Y . ")")
 Return
 
 RunIDPrep:
