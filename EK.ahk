@@ -37,6 +37,7 @@ Gui, add, Button, gB1P x195 y35, GoTo
 Gui, add, Button, gB3 vB3 x15 y65, SegID
 Gui, add, Edit, w50 h100 r1 x85 y65 vB03X
 Gui, add, Edit, w50 h100 r1 x140 y65 vB03Y
+Gui, add, Button, gB3P x195 y65, GoTo
 ;Gui, add, Button, gB4 vB4 x15 y95, SaveRun
 ;Gui, add, Edit, w50 h100 r1 x85 y95 vB04X
 ;Gui, add, Edit, w50 h100 r1 x140 y95 vB04Y
@@ -410,7 +411,42 @@ If ErrorLevel
 }
 MouseMove, %B01X%, %B01Y%
 MouseClick, R, %B01X%, %B01Y%
-LogEntry("Right click on: (" . B01X . "," . B01Y . ")")
+LogEntry("Right click on query at: (" . B01X . "," . B01Y . ")")
+Return
+
+B3P:
+Gui, Submit, NoHide
+WinActivate, %Title%
+WinWaitActive, %Title%,,2
+If ErrorLevel
+{
+	LogEntry("Missing window title: " . Title . " could not focus.")
+	MsgBox,, No Window, Could not focus window with title: %Title%
+	Return
+}
+MouseMove, %B01X%, %B01Y%
+MouseClick, R, %B01X%, %B01Y%
+LogEntry("Right click on query at: (" . B01X . "," . B01Y . ")")
+Sleep, 500
+Loop 5
+{
+	Sleep 30
+	Send {Down}
+}
+Send {Enter}
+WinWait, Advanced Query,,2
+WinActivate, Advanced Query
+WinWaitActive, Advanced Query,,2
+If ErrorLevel
+{
+	LogEntry("Timeout waiting for Advanced Query Window")
+	MsgBox,, No Query Window, Could not find Advanced Query window to move the mouse to the SegID box...
+	Return
+}
+SendMode Event
+MouseMove, %B03X%, %B03Y%, 100
+SendMode Input
+LogEntry("Move mouse to SegID Box: (" . B03X . "," . B03Y . ")")
 Return
 
 RunIDPrep:
