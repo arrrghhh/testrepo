@@ -162,19 +162,7 @@ CheckMarkToggle(MenuItem, MenuName)
 
 SaveConfig:
 LogEntry("Getting values from input boxes...")
-Loop, 11
-{
-	If (A_Index < 10)
-	{
-		GuiControlGet, B0%A_Index%X
-		GuiControlGet, B0%A_Index%Y
-	}
-	If (A_Index >= 10)
-	{
-		GuiControlGet, B%A_Index%X
-		GuiControlGet, B%A_Index%Y
-	}
-}
+Gui, Submit, NoHide
 If FileExist(ConfigFile)
 {
 	LogEntry("Existing config file, asking user to overwrite")
