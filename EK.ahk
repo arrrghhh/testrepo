@@ -553,9 +553,15 @@ LogEntry("Run ID Prep Start (from file:) " . SelectedFile)
 If !FileExist(SelectedFile)
 {
 	LogEntry("Missing " . SelectedFile . " file path...")
-	MsgBox,, File Error, Missing %SelectedFile% file path...
-	GuiControl, Text, RunIDPrep, RunIDPrep
-	Return
+	MsgBox,, File Error, Missing %SelectedFile% file path... Please specify input file.
+	FileSelectFile, SelectedFile, 1, , Select Input File Location, *.txt
+	if SelectedFile =
+	{
+		LogEntry("User did not select anything, returning...")
+		MsgBox,, Empty Selection, The user didn't select anything.  Returning.
+		GuiControl, Text, RunIDPrep, Run ID Prep
+		Return
+	}
 }
 If !FileExist(A_ScriptDir . "\Processing")
 {
@@ -772,8 +778,15 @@ Loop, %countfiles%
 		}
 		else
 		{
-			MsgBox,, Missing Binary, Missing GECQueryUpdater.exe
+			LogEntry("Missing GECQueryUpdater binary, asking user to select it.")
+			MsgBox,, Missing Binary, Missing GECQueryUpdater.exe`, select it.
 			FileSelectFile, GECQueryFileLoc, 1, , Select GECQueryUpdater Location, *.exe
+			if GECQueryFileLoc =
+			{
+				LogEntry("User did not select anything, returning...")
+				MsgBox,, Empty Selection, The user didn't select anything.  Returning.
+				Return
+			}
 			LogEntry("Running CompleteID script to modify DB")
 			TrayTip, Waiting..., Waiting for script to push to DB, %Timeout%, 1
 			RunWait %ComSpec% /c ""%GECQueryFileLoc%" "%ComIDFile%"",,Hide
