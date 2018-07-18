@@ -30,7 +30,7 @@ Gui, Add, Tab3,, Query|Save Calls
 Gui, add, Button, gB1 vB1 x15 y35, Query
 Gui, add, Edit, w50 h100 r1 x85 y35 vB01X
 Gui, add, Edit, w50 h100 r1 x140 y35 vB01Y
-Gui, add, Button, gB1P x195 y35, GoTo
+Gui, add, Button, gB1P vB1P x195 y35, GoTo
 ;Gui, add, Button, gB2 vB2 x15 y65, Edit
 ;Gui, add, Edit, w50 h100 r1 x85 y65 vB02X
 ;Gui, add, Edit, w50 h100 r1 x140 y65 vB02Y
@@ -44,15 +44,15 @@ Gui, add, Button, gB3P vB3P x195 y65, GoTo
 Gui, add, Button, gB5 vB5 x15 y95, GroupBy:
 Gui, add, Edit, w50 h100 r1 x85 y95 vB05X
 Gui, add, Edit, w50 h100 r1 x140 y95 vB05Y
-Gui, add, Button, gB5P x195 y95, GoTo
+Gui, add, Button, gB5P vB5P x195 y95, GoTo
 Gui, add, Button, gB6 vB6 x15 y125, Top Result
 Gui, add, Edit, w50 h100 r1 x85 y125 vB06X
 Gui, add, Edit, w50 h100 r1 x140 y125 vB06Y
-Gui, add, Button, gB6P x195 y125, GoTo
+Gui, add, Button, gB6P vB6P x195 y125, GoTo
 Gui, add, Button, gB7 vB7 x15 y155, Save Calls
 Gui, add, Edit, w50 h100 r1 x85 y155 vB07X
 Gui, add, Edit, w50 h100 r1 x140 y155 vB07Y
-Gui, add, Button, gB7P x195 y155, GoTo
+Gui, add, Button, gB7P vB7P x195 y155, GoTo
 
 Gui, add, Button, w100 x300 y50 hwndhbuttonrunidprep vRunIDPrep gRunIDPrep, Run ID Prep
 Gui, add, Button, w100 x300 y80 hwndhbuttonrunrobot vRunRobot gRunRobot, RunRobot
@@ -81,16 +81,18 @@ Gui, Tab, 2
 Gui, add, Button, gB8 vB8 x15 y35, Loc Input
 Gui, add, Edit, w50 h100 r1 x85 y35 vB08X
 Gui, add, Edit, w50 h100 r1 x140 y35 vB08Y
-Gui, add, Button, gB8P x195 y35, GoTo
+Gui, add, Button, gB8P vB8P x195 y35, GoTo
 Gui, add, Button, gB9 vB9 x15 y65, WAV Radio
 Gui, add, Edit, w50 h100 r1 x85 y65 vB09X
 Gui, add, Edit, w50 h100 r1 x140 y65 vB09Y
+Gui, add, Button, gB9P vB9P x195 y65, GoTo
 ;Gui, add, Button, gB10 vB10 x15 y95, Save Btn
 ;Gui, add, Edit, w50 h100 r1 x85 y95 vB10X
 ;Gui, add, Edit, w50 h100 r1 x140 y95 vB10Y
 Gui, add, Button, gB11 vB11 x15 y35, Three Dots
 Gui, add, Edit, w50 h100 r1 x85 y35 vB11X
 Gui, add, Edit, w50 h100 r1 x140 y35 vB11Y
+Gui, add, Button, gB11P vB11P x195 y35, GoTo
 Gui, add, Edit, w300 h100 r1 x15 y95 vUNCpath, C:\temp
 
 GuiControl, Hide, B8
@@ -287,12 +289,15 @@ Engage()
 	GuiControl, Hide, B11
 	GuiControl, Hide, B11X
 	GuiControl, Hide, B11Y
+	GuiControl, Hide, B11P
 	GuiControl, Show, B8
 	GuiControl, Show, B08X
 	GuiControl, Show, B08Y
+	GuiControl, Show, B8P
 	GuiControl, Show, B9
 	GuiControl, Show, B09X
 	GuiControl, Show, B09Y
+	GuiControl, Show, B9P
 }
 
 NIM:
@@ -305,12 +310,15 @@ NIM()
 	GuiControl, Show, B11
 	GuiControl, Show, B11X
 	GuiControl, Show, B11Y
+	GuiControl, Show, B11P
 	GuiControl, Hide, B8
 	GuiControl, Hide, B08X
 	GuiControl, Hide, B08Y
+	GuiControl, Hide, B8P
 	GuiControl, Hide, B9
 	GuiControl, Hide, B09X
 	GuiControl, Hide, B09Y
+	GuiControl, Hide, B9P
 }
 
 B1:		; Query
@@ -459,27 +467,33 @@ Return
 
 B1P:
 Gui, Submit, NoHide
+GuiControl, Text, B1P, .....
 WinActivate, %Title%
 WinWaitActive, %Title%,,2
 If ErrorLevel
 {
 	LogEntry("Missing window title: " . Title . " could not focus.")
 	MsgBox,, No Window, Could not focus window with title: %Title%
+	GuiControl, Text, B1P, GoTo
 	Return
 }
 MouseMove, %B01X%, %B01Y%
 MouseClick, R, %B01X%, %B01Y%
+Gui, Flash
 LogEntry("Right click on query at: (" . B01X . "," . B01Y . ")")
+GuiControl, Text, B1P, GoTo
 Return
 
 B3P:
 Gui, Submit, NoHide
+GuiControl, Text, B3P, .....
 WinActivate, %Title%
 WinWaitActive, %Title%,,2
 If ErrorLevel
 {
 	LogEntry("Missing window title: " . Title . " could not focus.")
 	MsgBox,, No Window, Could not focus window with title: %Title%
+	GuiControl, Text, B3P, GoTo
 	Return
 }
 MouseClick, R, %B01X%, %B01Y%
@@ -497,73 +511,90 @@ WinWaitActive, Advanced Query,,2
 If ErrorLevel
 {
 	LogEntry("Timeout waiting for Advanced Query Window")
-	MsgBox,, No Query Window, Could not find Advanced Query window to move the mouse to the SegID box...
+	MsgBox, No Query Window, Could not find Advanced Query window to move the mouse to the SegID box...
+	GuiControl, Text, B3P, GoTo
 	Return
 }
 SendMode Event ; Cannot change mouse speed (the 100 is the slowest) in Input mode...
 MouseMove, %B03X%, %B03Y%, 100
 SendMode Input
+Gui, Flash
 LogEntry("Move mouse to SegID Box: (" . B03X . "," . B03Y . ")")
+GuiControl, Text, B3P, GoTo
 Return
 
 B5P:
 Gui, Submit, NoHide
+GuiControl, Text, B5P, .....
 WinActivate, %Title%
 WinWaitActive, %Title%,,2
 If ErrorLevel
 {
 	LogEntry("Missing window title: " . Title . " could not focus.")
 	MsgBox,, No Window, Could not focus window with title: %Title%
+	GuiControl, Text, B5P, GoTo
 	Return
 }
 MouseMove, %B05X%, %B05Y%
 MouseClick, L, %B05X%, %B05Y%
 Sleep, 500
 MouseClick, L, %B05X%, %B05Y%
+Gui, Flash
 LogEntry("Move & (left) clicked on: (" . B05X . "," . B05Y . ")")
+GuiControl, Text, B5P, GoTo
 Return
 
 B6P:
 Gui, Submit, NoHide
+GuiControl, Text, B6P, .....
 WinActivate, %Title%
 WinWaitActive, %Title%,,2
 If ErrorLevel
 {
 	LogEntry("Missing window title: " . Title . " could not focus.")
 	MsgBox,, No Window, Could not focus window with title: %Title%
+	GuiControl, Text, B6P, GoTo
 	Return
 }
 SendMode Event
 MouseMove, %B06X%, %B06Y%, 100
 SendMode Input
 MouseClick, L, %B06X%, %B06Y%
+Gui, Flash
 LogEntry("(Left) clicked on top result at: (" . B06X . "," . B06Y . ")")
+GuiControl, Text, B6P, GoTo
 Return
 
 B7P:
 Gui, Submit, NoHide
+GuiControl, Text, B7P, .....
 WinActivate, %Title%
 WinWaitActive, %Title%,,2
 If ErrorLevel
 {
 	LogEntry("Missing window title: " . Title . " could not focus.")
 	MsgBox,, No Window, Could not focus window with title: %Title%
+	GuiControl, Text, B7P, GoTo
 	Return
 }
 SendMode Event
 MouseMove, %B07X%, %B07Y%, 100
 SendMode Input
+Gui, Flash
 LogEntry("Move to Save Calls button at: (" . B07X . "," . B07Y . ")")
+GuiControl, Text, B7P, GoTo
 Return
 
 B8P:
 Gui, Submit, NoHide
+GuiControl, Text, B8P, .....
 WinActivate, %Title%
 WinWaitActive, %Title%,,2
 If ErrorLevel
 {
 	LogEntry("Missing window title: " . Title . " could not focus.")
 	MsgBox,, No Window, Could not focus window with title: %Title%
+	GuiControl, Text, B8P, GoTo
 	Return
 }
 MouseClick,, %B01X%, %B01Y%  ; Left click on query
@@ -603,11 +634,100 @@ If ErrorLevel
 {
 	LogEntry("Timeout waiting for Save Calls Dialog")
 	MsgBox,, Timeout, Timeout waiting for Save Calls Dialog - ensure calls are selected and press 'save calls' button, then press OK.
+	WinWaitActive, Save Calls,,%Timeout%
+	If ErrorLevel
+	{
+		MsgBox,, Timeout 2, Second timeout waiting for Save Calls dialog, returning.  Try again...
+		GuiControl, Text, B8P, GoTo
+		Return
+	}
 }
 SendMode Event
 MouseMove, %B08X%, %B08Y%, 100
 SendMode Input
+Gui, Flash
 LogEntry("Move to Save Calls button at: (" . B08X . "," . B08Y . ")")
+GuiControl, Text, B8P, GoTo
+Return
+
+B9P:
+Gui, Submit, NoHide
+GuiControl, Text, B9P, .....
+WinActivate, %Title%
+WinWaitActive, %Title%,,2
+If ErrorLevel
+{
+	LogEntry("Missing window title: " . Title . " could not focus.")
+	MsgBox,, No Window, Could not focus window with title: %Title%
+	GuiControl, Text, B9P, GoTo
+	Return
+}
+SendMode Event
+MouseMove, %B09X%, %B09Y%, 100
+SendMode Input
+Gui, Flash
+LogEntry("Move to Save Calls button at: (" . B09X . "," . B09Y . ")")
+GuiControl, Text, B9P, GoTo
+Return
+
+B11P:
+Gui, Submit, NoHide
+GuiControl, Text, B11P, .....
+WinActivate, %Title%
+WinWaitActive, %Title%,,2
+If ErrorLevel
+{
+	LogEntry("Missing window title: " . Title . " could not focus.")
+	MsgBox,, No Window, Could not focus window with title: %Title%
+	GuiControl, Text, B11P, GoTo
+	Return
+}
+MouseClick,, %B01X%, %B01Y%  ; Left click on query
+StartTime := A_TickCount
+ElapsedTime := 0
+ErrorTimeout := 0
+Timeoutms := Timeout*1000
+Sleep, 300
+TrayTip, Waiting..., Waiting for query to start, %Timeout%, 1
+While (GroupByBoxColor != 0xCED3D6 or GroupByBoxColor != 0xD6D3CE)
+{
+	If (ElapsedTime > Timeoutms)
+	{
+		LogEntry("Elapsed time (" . ElapsedTime . ") > Timeoutms (" . Timeoutms . ") , breaking loop")
+		ErrorTimeout := 1
+		break
+	}
+	PixelGetColor, GroupByBoxColor, %B05X%, %B05Y%
+	LogEntry("Got Color " . GroupByBoxColor . " at coodinate (" . B05X . "`," . B05Y . ")")
+	ElapsedTime := A_TickCount - StartTime
+	LogEntry("Time elapsed: " . ElapsedTime)
+	If (GroupByBoxColor = 0xFFFFFF)
+	{
+		If (ElapsedTime < 500)
+			continue
+		Else
+			break
+	}
+}
+HideTrayTip()
+MouseClick,, %B06X%, %B06Y% ; Select top result
+TrayTip, Click, Clicking on Save Calls button..., 10, 1
+LogEntry("Click Save Calls (" . B07X . "`," . B07Y . ")")
+MouseClick,, %B07X%, %B07Y%
+WinWait, Save Calls,,%Timeout%
+WinActivate, Save Calls
+WinWaitActive, Save Calls,,%Timeout%
+If ErrorLevel
+{
+	LogEntry("Timeout waiting for Save Calls Dialog")
+	MsgBox,, Timeout, Timeout waiting for Save Calls Dialog - ensure calls are selected and press 'save calls' button, then press OK.
+}
+SendMode Event
+MouseMove, %B11X%, %B11Y%, 100
+SendMode Input
+Gui, Flash
+LogEntry("Move to Save Calls button at: (" . B11X . "," . B11Y . ")")
+GuiControl, Text, B11P, GoTo
 Return
 
 RunIDPrep:
