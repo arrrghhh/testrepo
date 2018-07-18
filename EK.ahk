@@ -166,9 +166,9 @@ If (countfiles >= 1)
 }
 Menu, OptionsMenu, Check, AlwaysOnTop
 global AlwaysOnTopFlag := 1
-Gui, 1: +AlwaysOnTop
 Gui, -dpiscale
 Gui, Show,, EliteKeep Extraction
+Gui, 1: +AlwaysOnTop
 Return
 
 OnTop:
