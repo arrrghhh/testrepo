@@ -52,6 +52,7 @@ Gui, add, Button, gB6P x195 y125, GoTo
 Gui, add, Button, gB7 vB7 x15 y155, Save Calls
 Gui, add, Edit, w50 h100 r1 x85 y155 vB07X
 Gui, add, Edit, w50 h100 r1 x140 y155 vB07Y
+Gui, add, Button, gB7P x195 y155, GoTo
 
 Gui, add, Button, w100 x300 y50 hwndhbuttonrunidprep vRunIDPrep gRunIDPrep, Run ID Prep
 Gui, add, Button, w100 x300 y80 hwndhbuttonrunrobot vRunRobot gRunRobot, RunRobot
@@ -483,6 +484,22 @@ MouseMove, %B06X%, %B06Y%, 100
 SendMode Input
 MouseClick, L, %B06X%, %B06Y%
 LogEntry("(Left) clicked on top result at: (" . B06X . "," . B06Y . ")")
+Return
+
+B7P:
+Gui, Submit, NoHide
+WinActivate, %Title%
+WinWaitActive, %Title%,,2
+If ErrorLevel
+{
+	LogEntry("Missing window title: " . Title . " could not focus.")
+	MsgBox,, No Window, Could not focus window with title: %Title%
+	Return
+}
+SendMode Event
+MouseMove, %B07X%, %B07Y%, 100
+SendMode Input
+LogEntry("Move to Save Calls button at: (" . B07X . "," . B07Y . ")")
 Return
 
 RunIDPrep:
