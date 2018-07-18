@@ -81,6 +81,7 @@ Gui, Tab, 2
 Gui, add, Button, gB8 vB8 x15 y35, Loc Input
 Gui, add, Edit, w50 h100 r1 x85 y35 vB08X
 Gui, add, Edit, w50 h100 r1 x140 y35 vB08Y
+Gui, add, Button, gB8P x195 y35, GoTo
 Gui, add, Button, gB9 vB9 x15 y65, WAV Radio
 Gui, add, Edit, w50 h100 r1 x85 y65 vB09X
 Gui, add, Edit, w50 h100 r1 x140 y65 vB09Y
@@ -427,7 +428,6 @@ If ErrorLevel
 	MsgBox,, No Window, Could not focus window with title: %Title%
 	Return
 }
-MouseMove, %B01X%, %B01Y%
 MouseClick, R, %B01X%, %B01Y%
 LogEntry("Right click on query at: (" . B01X . "," . B01Y . ")")
 Sleep, 500
@@ -500,6 +500,60 @@ SendMode Event
 MouseMove, %B07X%, %B07Y%, 100
 SendMode Input
 LogEntry("Move to Save Calls button at: (" . B07X . "," . B07Y . ")")
+Return
+
+B8P:
+Gui, Submit, NoHide
+WinActivate, %Title%
+WinWaitActive, %Title%,,2
+If ErrorLevel
+{
+	LogEntry("Missing window title: " . Title . " could not focus.")
+	MsgBox,, No Window, Could not focus window with title: %Title%
+	Return
+}
+MouseClick,, %B01X%, %B01Y%  ; Left click on query
+StartTime := A_TickCount
+ElapsedTime := 0
+ErrorTimeout := 0
+TrayTip, Waiting..., Waiting for query to start, %Timeout%, 1
+While (GroupByBoxColor != 0xCED3D6 or GroupByBoxColor != 0xD6D3CE)
+{
+	If (ElapsedTime > Timeoutms)
+	{
+		LogEntry("Elapsed time (" . ElapsedTime . ") > Timeoutms (" . Timeoutms . ") , breaking loop")
+		ErrorTimeout := 1
+		break
+	}
+	PixelGetColor, GroupByBoxColor, %B05X%, %B05Y%
+	LogEntry("Got Color " . GroupByBoxColor . " at coodinate (" . B05X . "`," . B05Y . ")")
+	ElapsedTime := A_TickCount - StartTime
+	LogEntry("Time elapsed: " . ElapsedTime)
+	If (GroupByBoxColor = 0xFFFFFF)
+	{
+		If (ElapsedTime < 500)
+			continue
+		Else
+			break
+	}
+}
+HideTrayTip()
+MouseClick,, %B06X%, %B06Y% ; Select top result
+TrayTip, Click, Clicking on Save Calls button..., 10, 1
+LogEntry("Click Save Calls (" . B07X . "`," . B07Y . ")")
+MouseClick,, %B07X%, %B07Y%
+WinWait, Save Calls,,%Timeout%
+WinActivate, Save Calls
+WinWaitActive, Save Calls,,%Timeout%
+If ErrorLevel
+{
+	LogEntry("Timeout waiting for Save Calls Dialog")
+	MsgBox,, Timeout, Timeout waiting for Save Calls Dialog - ensure calls are selected and press 'save calls' button, then press OK.
+}
+SendMode Event
+MouseMove, %B08X%, %B08Y%, 100
+SendMode Input
+LogEntry("Move to Save Calls button at: (" . B08X . "," . B08Y . ")")
 Return
 
 RunIDPrep:
