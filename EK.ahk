@@ -131,6 +131,9 @@ If (countfiles >= 1)
 	MsgBox,, Processing, Files exist in Processing folder!  Continue robot or overwrite with ID prep.
 	LogEntry("Processing files exist - countfiles var (" . countfiles . ") more than or equal to one...User choice")
 }
+Menu, OptionsMenu, Check, AlwaysOnTop
+global AlwaysOnTopFlag := 1
+Gui, 1: +AlwaysOnTop
 Gui, -dpiscale
 Gui, Show,, EliteKeep Extraction
 Return
