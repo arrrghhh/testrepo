@@ -48,6 +48,7 @@ Gui, add, Button, gB5P x195 y95, GoTo
 Gui, add, Button, gB6 vB6 x15 y125, Top Result
 Gui, add, Edit, w50 h100 r1 x85 y125 vB06X
 Gui, add, Edit, w50 h100 r1 x140 y125 vB06Y
+Gui, add, Button, gB6P x195 y125, GoTo
 Gui, add, Button, gB7 vB7 x15 y155, Save Calls
 Gui, add, Edit, w50 h100 r1 x85 y155 vB07X
 Gui, add, Edit, w50 h100 r1 x140 y155 vB07Y
@@ -465,6 +466,23 @@ MouseClick, L, %B05X%, %B05Y%
 Sleep, 500
 MouseClick, L, %B05X%, %B05Y%
 LogEntry("Move & (left) clicked on: (" . B05X . "," . B05Y . ")")
+Return
+
+B6P:
+Gui, Submit, NoHide
+WinActivate, %Title%
+WinWaitActive, %Title%,,2
+If ErrorLevel
+{
+	LogEntry("Missing window title: " . Title . " could not focus.")
+	MsgBox,, No Window, Could not focus window with title: %Title%
+	Return
+}
+SendMode Event
+MouseMove, %B06X%, %B06Y%, 100
+SendMode Input
+MouseClick, L, %B06X%, %B06Y%
+LogEntry("(Left) clicked on top result at: (" . B06X . "," . B06Y . ")")
 Return
 
 RunIDPrep:
