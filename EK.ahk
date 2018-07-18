@@ -1244,7 +1244,7 @@ Loop, %countfiles%
 	LogEntry("Completed loop: " . A_Index . " of " . countfiles . " in " . LoopElapsed . "sec.")
 	If !FileExist(A_ScriptDir . "\Processed")
 		FileCreateDir, % A_ScriptDir . "\Processed"
-	FileMove, %CurFile%, %A_ScriptDir%\Processed\
+	FileMove, %CurFile%, %A_ScriptDir%\Processed\, 1
 	TrayTip, Loop End, End of loop %A_Index% of %countfiles%, %Timeout%, 1
 	GuiControl,, MyProgress, %A_Index%
 	GuiControl, Text, LoadingTxt, Robot Completed: %A_Index% of %countfiles%
