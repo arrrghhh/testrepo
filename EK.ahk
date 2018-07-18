@@ -37,7 +37,7 @@ Gui, add, Button, gB1P x195 y35, GoTo
 Gui, add, Button, gB3 vB3 x15 y65, SegID
 Gui, add, Edit, w50 h100 r1 x85 y65 vB03X
 Gui, add, Edit, w50 h100 r1 x140 y65 vB03Y
-Gui, add, Button, gB3P x195 y65, GoTo
+Gui, add, Button, gB3P vB3P x195 y65, GoTo
 ;Gui, add, Button, gB4 vB4 x15 y95, SaveRun
 ;Gui, add, Edit, w50 h100 r1 x85 y95 vB04X
 ;Gui, add, Edit, w50 h100 r1 x140 y95 vB04Y
@@ -108,19 +108,50 @@ If FileExist(ConfigFile)
 {
 	Loop, read, %ConfigFile%
 	{
-		Array := StrSplit(A_LoopReadLine, ":")
+		Array := StrSplit(A_LoopReadLine, "-")
 		XorY := SubStr(Array[1], 4, 1)
 		Num := SubStr(Array[1], 2, 2)
+		Remain := SubStr(Array[1], 1, 1)
 		If (XorY = "X")
 		{
 			B%Num%X := Array[2]
 			GuiControl,, B%Num%X, % B%Num%X
 		}
-		Else
+		If (XorY = "Y")
 		{
 			B%Num%Y := Array[2]
 			GuiControl,, B%Num%Y, % B%Num%Y
 		}
+		If (Remain = "S") ; Segment or Complete ID
+		{
+			If (Array[2] = S)
+			{
+				GuiControl,, SegID, 1
+				SegID()
+			}
+			Else
+			{
+				GuiControl,, ComID, 1
+				ComID()
+			}
+		}
+		If (Remain = "E") ; Engage or NIM
+		{
+			If (Array[2] = E)
+			{
+				GuiControl,, Engage, 1
+				Engage()
+			}
+			Else
+			{
+				GuiControl,, NIM, 1
+				NIM()
+			}
+		}
+		If (Remain = "U") ; URL
+			GuiControl,, UNCpath, % Array[2]
+		If (Remain = "W") ; Window Title
+			GuiControl,, Title, % Array[2]
 	}
 }
 countfiles := 0
@@ -190,20 +221,30 @@ Loop, 11
 		tmpX := B0%A_Index%X
 		tmpY := B0%A_Index%Y
 		Sleep, 50
-		FileAppend, % "B0" . A_Index . "X:" . tmpX . "`n", %ConfigFile%
+		FileAppend, % "B0" . A_Index . "X-" . tmpX . "`n", %ConfigFile%
 		Sleep, 100
-		FileAppend, % "B0" . A_Index . "Y:" . tmpY . "`n", %ConfigFile%
+		FileAppend, % "B0" . A_Index . "Y-" . tmpY . "`n", %ConfigFile%
 	}
 	If (A_Index >= 10)
 	{
 		tmpX := B%A_Index%X
 		tmpY := B%A_Index%Y
 		Sleep, 50
-		FileAppend, % "B" . A_Index . "X:" . tmpX . "`n", %ConfigFile%
+		FileAppend, % "B" . A_Index . "X-" . tmpX . "`n", %ConfigFile%
 		Sleep, 100
-		FileAppend, % "B" . A_Index . "Y:" . tmpY . "`n", %ConfigFile%
+		FileAppend, % "B" . A_Index . "Y-" . tmpY . "`n", %ConfigFile%
 	}
 }
+If SegID = 1
+	FileAppend, SegorCom- S`n, %ConfigFile%
+If ComID = 1
+	FileAppend, SegorCom- C`n, %ConfigFile%
+If Engage
+	FileAppend, EngorNIM- E`n, %ConfigFile%
+If NIM
+	FileAppend, EngorNIM- N`n, %ConfigFile%
+FileAppend, % "URL-" . UNCPath . "`n", %ConfigFile%
+FileAppend, % "Window Title-" . Title, %ConfigFile%
 If FileExist(ConfigFile)
 	MsgBox,, Save Config, Save Config Task Complete
 Else
@@ -211,44 +252,66 @@ Else
 Return
 
 SegID:
-LogEntry("SegID selected, make sure it is shown.")
-GuiControl, Show, B3
-GuiControl, Show, B03X
-GuiControl, Show, B03Y
+SegID()
 Return
+
+SegID()
+{
+	LogEntry("SegID selected, make sure it is shown.")
+	GuiControl, Show, B3
+	GuiControl, Show, B03X
+	GuiControl, Show, B03Y
+	GuiControl, Show, B3P
+}
 
 ComID:
-LogEntry("CompleteID selected, make sure SegID is hidden.")
-GuiControl, Hide, B3
-GuiControl, Hide, B03X
-GuiControl, Hide, B03Y
+ComID()
 Return
+
+ComID()
+{
+	LogEntry("CompleteID selected, make sure SegID is hidden.")
+	GuiControl, Hide, B3
+	GuiControl, Hide, B03X
+	GuiControl, Hide, B03Y
+	GuiControl, Hide, B3P
+}
 
 Engage:
-LogEntry("Engage 6.4+ selected, make sure to hide 3 dots and show LocInput/WAV radio")
-GuiControl, Hide, B11
-GuiControl, Hide, B11X
-GuiControl, Hide, B11Y
-GuiControl, Show, B8
-GuiControl, Show, B08X
-GuiControl, Show, B08Y
-GuiControl, Show, B9
-GuiControl, Show, B09X
-GuiControl, Show, B09Y
+Engage()
 Return
 
+Engage()
+{
+	LogEntry("Engage 6.4+ selected, make sure to hide 3 dots and show LocInput/WAV radio")
+	GuiControl, Hide, B11
+	GuiControl, Hide, B11X
+	GuiControl, Hide, B11Y
+	GuiControl, Show, B8
+	GuiControl, Show, B08X
+	GuiControl, Show, B08Y
+	GuiControl, Show, B9
+	GuiControl, Show, B09X
+	GuiControl, Show, B09Y
+}
+
 NIM:
-LogEntry("NIM/6.3 selected, make sure to show the 3 dots and hide LocInput/WAV radio")
-GuiControl, Show, B11
-GuiControl, Show, B11X
-GuiControl, Show, B11Y
-GuiControl, Hide, B8
-GuiControl, Hide, B08X
-GuiControl, Hide, B08Y
-GuiControl, Hide, B9
-GuiControl, Hide, B09X
-GuiControl, Hide, B09Y
+NIM()
 Return
+
+NIM()
+{
+	LogEntry("NIM/6.3 selected, make sure to show the 3 dots and hide LocInput/WAV radio")
+	GuiControl, Show, B11
+	GuiControl, Show, B11X
+	GuiControl, Show, B11Y
+	GuiControl, Hide, B8
+	GuiControl, Hide, B08X
+	GuiControl, Hide, B08Y
+	GuiControl, Hide, B9
+	GuiControl, Hide, B09X
+	GuiControl, Hide, B09Y
+}
 
 B1:		; Query
 GuiControl, Text, B1, Working
