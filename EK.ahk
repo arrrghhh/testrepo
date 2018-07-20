@@ -7,7 +7,7 @@ SetTitleMatchMode, RegEx
 ;CoordMode, Mouse, Window
 ;CoordMode, Pixel, Screen
 
-version = 2018.07.20.1512
+version = 2018.07.20.1516
 
 TitleBar = EliteKeep Extraction
 
@@ -146,7 +146,7 @@ If FileExist(ConfigFile)
 				ComID()
 			}
 		}
-		If (Remain = "U")
+		If (Remain = "E")
 		{
 			If (Array[2] = "E")
 			{
