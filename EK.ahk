@@ -7,6 +7,10 @@ SetTitleMatchMode, RegEx
 ;CoordMode, Mouse, Window
 ;CoordMode, Pixel, Screen
 
+version = 2018.07.20.1446
+
+TitleBar = EliteKeep Extraction
+
 Global SelectedFile := A_ScriptDir . "\config\ID.txt"
 ConfigFile := A_ScriptDir . "\config\EKconfig.txt"
 Global LogFile := A_ScriptDir . "\logs\GEC_RobotExtraction_" . A_YYYY . "-" . A_MM . "-" A_DD . ".log"
@@ -21,11 +25,13 @@ LogEntry("Application Startup")
 Menu, FileMenu, Add, Save Config, SaveConfig
 Menu, FileMenu, Add, Exit, ExitSub
 Menu, OptionsMenu, Add, AlwaysOnTop, OnTop
+Menu, HelpMenu, add, About, About
 Menu, MyMenu, Add, &File, :FileMenu
 Menu, MyMenu, Add, &Options, :OptionsMenu
+menu, MyMenu, Add, &Help, :HelpMenu
 Gui, Menu, MyMenu
 
-GuiTitle=EliteKeep Extraction
+GuiTitle=%TitleBar%
 Gui, Add, Tab3,, Query|Save Calls
 Gui, add, Button, gB1 vB1 x15 y35, Query
 Gui, add, Edit, w50 h100 r1 x85 y35 vB01X
@@ -160,7 +166,11 @@ If (countfiles >= 1)
 Menu, OptionsMenu, Check, AlwaysOnTop
 global AlwaysOnTopFlag := 1
 Gui, -dpiscale
-Gui, Show,, EliteKeep Extraction
+Gui, Show,, %TitleBar%
+WinGetPos X, Y, Width, Height, %TitleBar%
+GuiX := A_ScreenWidth - Width
+GuiY := A_ScreenHeight - Height - 40
+WinMove %TitleBar%, ,%GuiX%, %GuiY%
 Gui, 1: +AlwaysOnTop
 Return
 
@@ -1311,6 +1321,10 @@ HideTrayTip()
         Menu Tray, Icon
     }
 }
+
+About:
+MsgBox,, %TitleBar%, Version: %version% `n`nCopyright 2018 Scott Brescia `n`nLicensed under the Apache License, Version 2.0 (the "License"); `nyou may not use this file except in compliance with the License. `n You may obtain a copy of the License at `n`nhttp://www.apache.org/licenses/LICENSE-2.0 `n`nUnless required by applicable law or agreed to in writing, software `ndistributed under the License is distributed on an "AS IS" BASIS, `nWITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, `neither express or implied. See the License for the `nspecific language governing permissions and limitations `nunder the License.
+Return
 
 ExitSub:
 LogEntry("Exit Application")
