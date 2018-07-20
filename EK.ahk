@@ -102,12 +102,15 @@ Gui, add, Button, gB11P vB11P x195 y35, GoTo
 Gui, add, Edit, w300 h100 r1 x15 y95 vUNCpath, C:\temp
 
 GuiControl, Hide, B8
+GuiControl, Hide, B8P
 GuiControl, Hide, B08X
 GuiControl, Hide, B08Y
 GuiControl, Hide, B9
+GuiControl, Hide, B9P
 GuiControl, Hide, B09X
 GuiControl, Hide, B09Y
 GuiControl, Hide, B11
+GuiControl, Hide, B11P
 GuiControl, Hide, B11X
 GuiControl, Hide, B11Y
 
