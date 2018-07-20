@@ -7,7 +7,7 @@ SetTitleMatchMode, RegEx
 ;CoordMode, Mouse, Window
 ;CoordMode, Pixel, Screen
 
-version = 2018.07.20.1446
+version = 2018.07.20.1512
 
 TitleBar = EliteKeep Extraction
 
@@ -122,6 +122,7 @@ If FileExist(ConfigFile)
 		Array := StrSplit(A_LoopReadLine, "-")
 		XorY := SubStr(Array[1], 4, 1)
 		Num := SubStr(Array[1], 2, 2)
+		Remain := SubStr(Array[1], 1, 1)
 		If (XorY = "X")
 		{
 			B%Num%X := Array[2]
@@ -132,25 +133,31 @@ If FileExist(ConfigFile)
 			B%Num%Y := Array[2]
 			GuiControl,, B%Num%Y, % B%Num%Y
 		}
-		If (Array[2] = "S")
+		If (Remain = "S")
 		{
-			GuiControl,, SegID, 1
-			SegID()
+			If (Array[2] = "S")
+			{
+				GuiControl,, SegID, 1
+				SegID()
+			}
+			If (Array[2] = "C")
+			{
+				GuiControl,, ComID, 1
+				ComID()
+			}
 		}
-		If (Array[2] = "C")
+		If (Remain = "U")
 		{
-			GuiControl,, ComID, 1
-			ComID()
-		}
-		If (Array[2] = "E")
-		{
-			GuiControl,, Engage, 1
-			Engage()
-		}
-		If (Array[2] = "N")
-		{
-			GuiControl,, NIM, 1
-			NIM()
+			If (Array[2] = "E")
+			{
+				GuiControl,, Engage, 1
+				Engage()
+			}
+			If (Array[2] = "N")
+			{
+				GuiControl,, NIM, 1
+				NIM()
+			}
 		}
 		If (Remain = "U") ; URL
 			GuiControl,, UNCpath, % Array[2]
